@@ -73,17 +73,22 @@ if nBadWMVox>0
 end
 
 
-%% create FA and MD maps and save them out to dti_proc dir
+%% create FA and diffusivity maps and save them out to dti_proc dir
 
 cd(p.dti_proc);
 
-[fa,md] = dtiComputeFA(dt.dt6);
-fa(fa>1) = 1; fa(fa<0) = 0;
+[fa,md,rd,ad] = dtiComputeFA(dt.dt6);
+% fa(fa>1) = 1; fa(fa<0) = 0;
+
+
+% load b0 file as a template nii
 nii=readFileNifti('dwi_b0.nii.gz');
-faNii=createNewNii(nii,'FA','fractional anisotropy',fa);
-writeFileNifti(faNii);
-mdNii=createNewNii(nii,'MD','mean diffusivity',md);
-writeFileNifti(mdNii);
+    
+% save out fa,md,rd, and ad maps as niftis
+out=createNewNii(nii,'FA','fractional anisotropy',fa); writeFileNifti(out);
+out=createNewNii(nii,'MD','mean diffusivity',md); writeFileNifti(out);
+out=createNewNii(nii,'RD','radial diffusivity',rd); writeFileNifti(out);
+out=createNewNii(nii,'AD','axial diffusivity',ad); writeFileNifti(out);
 
 
 
