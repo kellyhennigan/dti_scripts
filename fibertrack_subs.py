@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# filename: fibertrack.py
+# filename: fibertrack_subs.py
 # this script loops over subjects to perform fiber tracking using the mrtrix command tckgen
 
 # see here for more info on tckgen: https://github.com/jdtournier/mrtrix3/wiki/tckgen
@@ -13,8 +13,7 @@ mainDir = '/Users/Kelly/dti/data'		# experiment main data directory
 # subjects = ['sa01','sa07','sa10','sa11','sa13','sa14','sa16','sa18',
 # 	'sa19','sa20','sa21','sa22','sa23','sa24','sa25','sa26','sa27',
 # 	'sa28','sa29','sa30','sa31','sa32','sa33','sa34'] # subjects to process
-subjects = ['sa20','sa21','sa22','sa23','sa24','sa25','sa26','sa27',
-	'sa28','sa29','sa30','sa31','sa32','sa33','sa34'] # subjects to process
+subjects = ['sa13']
 	
 
 ##########################################################################################

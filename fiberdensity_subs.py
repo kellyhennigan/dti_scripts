@@ -12,7 +12,7 @@ mainDir = '/Users/Kelly/dti/data'		# experiment main data directory
 # subjects = ['sa01','sa07','sa10','sa11','sa13','sa14','sa16','sa18',
 # 	'sa19','sa20','sa21','sa22','sa23','sa24','sa25','sa26','sa27',
 # 	'sa28','sa29','sa30','sa31','sa32','sa33','sa34'] # subjects to process
-subjects = ['sa01']
+subjects = ['sa11','sa13','sa14','sa16','sa18']
 	
 
 ##########################################################################################
@@ -30,15 +30,15 @@ inFibers = ['nacc','caudate','putamen']	# strings defining in .tck files
 # options; leave blank or comment out to use mrtrix defaults: 
 template = 't1/t1_fs.nii.gz'		# template file for bounding box and transform
 vox_size = '1'						# isotropic voxel size (in mm)
-# contrast = 'tdi'					# contrast for output image; default is tdi (track density image)
-# stat_vox = 'sum'					# statistic for choosing the final voxel intensities; default is sum; mean can also be used
-# ends_only = true					# if true, fiber density maps will only reflect fiber endpoints
+contrast = 'tdi'					# contrast for output image; default is 'tdi' (track density image)
+stat_vox = 'sum'					# statistic for choosing the final voxel intensities; default is sum; mean can also be used
+ends_only = False					# if true, fiber density maps will only reflect fiber endpoints
 
 
 ##########################################################################################
 # DO IT 
 	
-	tckmap -template ../../t1/t1_fs.nii.gz -vox 1 -contrast tdi -stat_vox sum DA_nacc.tck DA_nacc_fd.nii.gz
+#	tckmap -template ../../t1/t1_fs.nii.gz -vox 1 -contrast tdi -stat_vox sum DA_nacc.tck DA_nacc_fd.nii.gz
 	
 # now loop through subjects
 for subject in subjects:
