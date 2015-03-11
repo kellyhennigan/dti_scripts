@@ -59,6 +59,7 @@ for subject in subjects:
 	
 	for roi in roi2Strs:
 		
+		
 # 		outfile = seedStr+'_'+roi+'.tck' 
 		outfile = roi+'.tck' 			 # name out file based on roi string
 	
