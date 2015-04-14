@@ -10,11 +10,14 @@ import os,sys
 
 mainDir = '/Users/Kelly/dti/data'		# experiment main data directory
 
-# subjects = ['sa01','sa07','sa10','sa11','sa13','sa14','sa16','sa18',
-# 	'sa19','sa20','sa21','sa22','sa23','sa24','sa25','sa26','sa27',
-# 	'sa28','sa29','sa30','sa31','sa32','sa33','sa34'] # subjects to process
-subjects = ['sa13']
-	
+
+subjects = ['sa01','sa07','sa10','sa11','sa13','sa14','sa16','sa18',
+ 	'sa19','sa20','sa21','sa22','sa23','sa24','sa25','sa26','sa27',
+ 	'sa28','sa29','sa30','sa31','sa32','sa33','sa34'] # subjects to process
+# subjects = ['sa07','sa10','sa11','sa13','sa14','sa16','sa18',
+#  	'sa19','sa20','sa21','sa22','sa23','sa24','sa25','sa26','sa27',
+#  	'sa28','sa29','sa30','sa31','sa32','sa33','sa34'] # subjects to process
+
 
 ##########################################################################################
 # EDIT AS NEEDED:
@@ -27,13 +30,18 @@ outDir = 'fibers/mrtrix'			# directory for saving out fiber file
 
 # these should be defined: 
 infile = 'CSD8.mif'					# tensor or CSD file 
-alg = 'SD_Stream'					# will do iFOD2 by default
+alg = 'iFOD2'						# will do iFOD2 by default
 gradfile = 'b_file' 				# b-gradient encoding file in mrtrix format
 maskfile = 'brainMask.nii.gz' 		# this should be included
 
 # define ROIs 
-seedStr = 'DA'						# if false, will use the mask as seed ROI by default
-roi2Strs = ['nacc','caudate','putamen']		# can be many or none; if not defined, fibers will just be tracked from the seed ROI
+# seedStr = 'DA'						# if false, will use the mask as seed ROI by default
+# roi2Strs = ['nacc','caudate','putamen']		# can be many or none; if not defined, fibers will just be tracked from the seed ROI
+seedStr = 'DA_L'						# if false, will use the mask as seed ROI by default
+roi2Strs = ['naccL']		# can be many or none; if not defined, fibers will just be tracked from the seed ROI
+excPath = ''
+#excPath = '/Users/Kelly/dti/data/AC_coronal_wall.nii.gz'
+
 
 # fiber tracking options; leave blank or comment out to use defaults:
 number = '1000'						# number of tracks to produce
@@ -42,6 +50,7 @@ maxlength = ''						# max length (in mm) of the tracks
 stop = True							# stop track once it has traversed all include ROIs
 step_size = ''						# define step size for tracking alg (in mm); default is .1* voxel size
 cutoff = ''							# determine FA cutoff value for terminating tracks (default is .1)
+initdir = '0,1,0.5' 		        # vector specifying the initial direction to track fibers from seed to target
 
 
 
@@ -60,8 +69,8 @@ for subject in subjects:
 	for roi in roi2Strs:
 		
 		
-# 		outfile = seedStr+'_'+roi+'.tck' 
 		outfile = roi+'.tck' 			 # name out file based on roi string
+
 	
 		cmd = 'tckgen'
 		if alg:
@@ -74,6 +83,8 @@ for subject in subjects:
 			cmd = cmd+' -seed_image '+os.path.join(roiDir,seedStr+'.nii.gz')
 		if roi:
 			cmd = cmd+' -include '+os.path.join(roiDir,roi+'.nii.gz')
+		if excPath:
+			cmd = cmd+' -exclude '+excPath
 		if number:
 			cmd = cmd+' -number '+str(number)
 		if maxnum:
@@ -86,6 +97,9 @@ for subject in subjects:
 			cmd = cmd+' -step '+str(step_size)
 		if cutoff:
 			cmd = cmd+' -cutoff '+str(cutoff)
+		if initdir:
+			cmd = cmd+' -initdirection '+str(initdir)
+	
 		cmd = cmd+' -info '+os.path.join(inDir,infile)+' '+os.path.join(outDir,outfile)
 		print cmd
 		os.system(cmd)		
