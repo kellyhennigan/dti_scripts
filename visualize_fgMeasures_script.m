@@ -55,4 +55,12 @@ for i=1:numel(subjects)
     saveas(gcf,[subjects{i} '_naccR.pdf'])
     close all
 end
+
+
+%% Render a fiber group with each point colored based on FA
+% See dtiGetValFromFibers
+arc_fa = dtiGetValFromFibers(dt.dt6,arc_clean,inv(dt.xformToAcpc),'fa');
+rgb = vals2colormap(arc_fa);
+AFQ_RenderFibers(arc_clean,'color',rgb,'numfibers',100)
+
     

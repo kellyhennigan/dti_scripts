@@ -15,19 +15,19 @@
 clear all
 close all
 
-subjects=getDTISubjects;
+subjects=getDTISubjects; subjects = {'sa34'};
 dataDir = '/Users/Kelly/dti/data';
 
 LorR = 'L';
 
 
-seed = 'DA';  % define seed roi
-target = 'caudate';
+seed = 'DA_L';  % define seed roi
+target = 'naccL';
 
-method = 'conTrack';
-fgName = ['scoredFG__' target '_DA_top2500_' LorR '.pdb']; 
-% method = 'mrtrix';
-% fgName = [target '.tck']; 
+% method = 'conTrack';
+% fgName = ['scoredFG__' target '_DA_top2500_' LorR '.pdb']; 
+method = 'mrtrix';
+fgName = [target '_belowAC.tck']; 
 
 
 % define parameters for pruning fibers
@@ -39,12 +39,12 @@ M='median';
 count = 1;
 show = 0; % 1 to plot each iteration, 0 otherwise
 
-outFgName = [target LorR '_autoclean']; % name for out fg file
+outFgName = [strrep(fgName,'.tck','') '_autoclean']; % name for out fg file
 
 %% DO IT
 
 
-fprintf('\n\n working on %s fibers for roi %s...\n',method,target);
+fprintf('\n\n working on %s fibers for roi %s...\n\n',method,target);
 for i=1:numel(subjects)
     
     subject = subjects{i}; 
@@ -71,7 +71,7 @@ for i=1:numel(subjects)
     
     % if target roi is the nacc, then do some extra pruning
     if strcmp(target(1:4),'nacc')
-        [fg,fg2] = pruneDaNaccFgs(fg,roi1,roi2,subject,method,LorR,0);
+        fg = pruneDaNaccFgs(fg,roi1,roi2,subject,method,LorR,1,1);
     end
     
     

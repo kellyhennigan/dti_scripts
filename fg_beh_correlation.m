@@ -1,20 +1,24 @@
 % fg_beh_correlation new
 
 clear all
-% close all
+close all
 
-scaleToTest = 'NS2'; % impulsivity
+scaleToTest = 'RD'; % impulsivity
 scaleStr = 'impulsivity scores';
+
 
 % fgMDir = '/Users/Kelly/dti/data/fgMeasures/mrtrix';
 fgMDir = '/Users/Kelly/dti/data/fgMeasures/conTrack';
-fgMatName = 'naccL.mat';
+fgMatName = 'caudateL.mat';
+
 
 fgMeasureToTest = 'MD'; % options are FA, MD, AD, or RD
 fgMeasureToPlot = 'FA';
 
+
 saveFigs =0;   % 1 to save figs to outDir otherwise 0
 outDir = '/Users/Kelly/dti/figures/fg_beh_corr';
+
 
 omit_subs = {'sa19','sa28'};
 

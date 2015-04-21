@@ -1,4 +1,4 @@
-% view fgs
+% quick and dirty script to view multiple fiber groups 
 
 clear all
 close all
@@ -19,7 +19,8 @@ saveFigs = 0;
 figDir = '/Users/Kelly/dti/figures/naccR_tract_profiles';
 
 
-%%
+
+%% do it
 
 
 
@@ -60,10 +61,13 @@ fprintf(['\n\nworking on subject... ' subjects{i}]);
     % Then add the slice X = -2 to the 3d rendering.
 %     AFQ_AddImageTo3dPlot(t1,[-2, 0, 0]);
     
-  AFQ_RenderFibers(fg{1},'tubes',0,'color',[0 0 1]);
-AFQ_RenderFibers(fg{2},'tubes',0,'color',[1 0 0],'newfig',0);
-AFQ_RenderFibers(fg{3},'tubes',0,'color',[.5 .5 0],'newfig',0);
+  AFQ_RenderFibers(fg{1},'tubes',0,'color',[0 0 1],'jittershading',.5);
+AFQ_RenderFibers(fg{2},'tubes',0,'color',[1 0 0],'jittershading',.5,'newfig',0);
+AFQ_RenderFibers(fg{3},'tubes',0,'color',[.5 .5 0],'jittershading',.5,'newfig',0);
 title(gca,subjects{i})
+
+
+
 
     % save figs?
     if saveFigs
