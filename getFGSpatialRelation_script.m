@@ -1,4 +1,4 @@
-% script to quantify the spatial relationship of DA-striatum pathways
+dtiC% script to quantify the spatial relationship of DA-striatum pathways
 
 
 
@@ -11,7 +11,7 @@
 %  med-lat (x-coord), ant-posterior (y-coord) and sup-inferior axes across
 %  subjects
 
-% use dtiFGSignTests for approach #1
+% use dtiFGSignTests_fg for approach #1
 
 
 %%%%%%%%%%%%%%%%% approach 2:
@@ -21,7 +21,13 @@
 %         dtiComputeSuperFiberRepresentation
 %     to compute mean and var/covar matrices along fiber group pathway nodes
 
-% this script is for approach #2
+
+
+%%%%%%%%%%%%%%%%% approach 3:
+
+%     following Vertsynen (2012) method: 
+
+
 
 
 %% sign test of x,y,z coordinates of fiber pathway endpoints

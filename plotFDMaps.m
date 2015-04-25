@@ -1,4 +1,4 @@
-function h = plotFDMaps(rgbImg,plane,acpcSlice,saveFig,figDir,figPrefix,subject)
+function h = plotFDMaps(rgbImg,plane,acpcSlice,saveFig,figDir,figPrefix,subjStr)
 % -------------------------------------------------------------------------
 % usage: this function handles all the desired formatting specific to
 % plotting fiber density overlay images
@@ -85,7 +85,7 @@ set(gca,'Position',[0,0,1,1]);
 
 if saveFig
     
-    figName = [figPrefix '' planeStr num2str(acpcSlice) '_' subject];
+    figName = [figPrefix '_' planeStr num2str(acpcSlice) '_' subjStr];
     
     fprintf(['\n\n saving out fig ' figName '...']);
     

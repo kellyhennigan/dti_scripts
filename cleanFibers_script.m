@@ -15,19 +15,19 @@
 clear all
 close all
 
-subjects=getDTISubjects; subjects = {'sa34'};
+subjects=getDTISubjects; 
 dataDir = '/Users/Kelly/dti/data';
 
-LorR = 'L';
+LorR = 'R';
 
 
-seed = 'DA_L';  % define seed roi
-target = 'naccL';
+seed = 'DA';  % define seed roi
+target = 'striatum';
 
 % method = 'conTrack';
 % fgName = ['scoredFG__' target '_DA_top2500_' LorR '.pdb']; 
 method = 'mrtrix';
-fgName = [target '_belowAC.tck']; 
+fgName = ['d' target LorR '.tck']; 
 
 
 % define parameters for pruning fibers
@@ -71,7 +71,7 @@ for i=1:numel(subjects)
     
     % if target roi is the nacc, then do some extra pruning
     if strcmp(target(1:4),'nacc')
-        fg = pruneDaNaccFgs(fg,roi1,roi2,subject,method,LorR,1,1);
+        fg = pruneDaNaccFgs(fg,roi1,roi2,subject,method,LorR,1,0);
     end
     
     

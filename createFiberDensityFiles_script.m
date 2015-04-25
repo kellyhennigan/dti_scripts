@@ -13,13 +13,23 @@ close all
 
 dataDir = '/Users/Kelly/dti/data';
 
-subjects = getDTISubjects();
+subjects = getDTISubjects(); 
 
-% method = 'mrtrix';
-method = 'conTrack';
-targets = {'nacc','caudate','putamen'};
 
-fgFileStr = '_manclean'; % files are named [target fgFileStr '.pdb']
+method = 'mrtrix';
+% method = 'conTrack';
+% targets = {'nacc','caudate','putamen','nacc_belowAC'};
+% targets = {'naccL','naccR','caudateL','caudateR','putamenL','putamenR'};
+targets ={'dstriatumL','dstriatumR'};
+
+% string to identify fiber group files? 
+fgFileStr = '_autoclean'; % files are named [target fgFileStr '.pdb']
+
+
+% string to include on outfile? 
+% outNameStr = fgNameStr;
+outNameStr = '';
+
 
 
 % options
@@ -78,14 +88,7 @@ for i=1:numel(subjects)
         %fdImg = dtiComputeFiberDensityNoGUI(fgs,xform,imSize,normalize,fgNum, endptFlag, fgCountFlag, weightVec, weightBins)
         fd = dtiComputeFiberDensityNoGUI(fg, t1.qto_xyz,size(t1.data));
         
-%         % set any voxel w/2 fibers or less equal to zero, then normalize by
-%         % max(fd) (note: I do this before normalizing the values to ensure
-%         % that I know the raw fiber count (2) I am thresholding by for each
-%         % voxel
-%         fd(fd<=fc_vox_thresh)=0; 
-%         fd=fd./max(fd(:));
-        
-        
+%       
         
         % Smooth the image?
         if smooth
@@ -95,7 +98,7 @@ for i=1:numel(subjects)
         
         
         % save new fiber density file
-        nii=createNewNii(fullfile(fdDir,outName),t1,'fiber density image',fd);
+        nii=createNewNii(t1,fd,fullfile(fdDir,outName),'fiber counts per vox');
         writeFileNifti(nii);
         
         

@@ -7,7 +7,7 @@ subjDir = '/Users/Kelly/dti/data/sa01';
 t1 = readFileNifti(fullfile(subjDir,'t1_fs.nii.gz'));
 
 % segmentation file
-% im = readFileNifti(fullfile(subjDir,'t1','t1_class.nii.gz')); 
+im = readFileNifti(fullfile(subjDir,'t1','t1_class.nii.gz')); 
 im = readFileNifti(fullfile(subjDir,'t1','aparc+aseg.nii.gz')); 
 
 % example fiber density overlay 
@@ -25,12 +25,12 @@ fg = mtrImportFibers(fullfile(subjDir,'fibers/mrtrix/parsopercularisL_man_clean.
 %% plot a cortex mesh 
 
 % create a cortical mesh from a segmentation file and plot it: 
-% msh = AFQ_meshCreate(im);
+msh = AFQ_meshCreate(im);
 % [p, msh, lightH] = AFQ_RenderCorticalSurface(msh);
 % 
 % % this can also be done by just calling AFQ_RenderCorticalSurface to create
 % % and render a new mesh: 
-% [p, msh, lightH] = AFQ_RenderCorticalSurface(im);
+[p, msh, lightH] = AFQ_RenderCorticalSurface(im);
 % 
 % 
 % % cortex mesh constructed from a filtered version of the image (will make
@@ -42,7 +42,7 @@ fg = mtrImportFibers(fullfile(subjDir,'fibers/mrtrix/parsopercularisL_man_clean.
 %% cortex mesh colored by fiber density overlay
 
 
-% msh = AFQ_meshCreate(im);
+msh = AFQ_meshCreate(im);
 % msh = AFQ_meshColor(msh, 'overlay', fd, 'thresh',.01, 'crange', [.01 .8], 'cmap', autumn)
 
 % alternatively, the mesh can be created and rendered just using the
@@ -91,7 +91,7 @@ clear p msh lightH
 
 lightH = AFQ_RenderFibers(fg,'color',[1 0 0],'numfibers',500,'newfig',1)
 
-[p, msh, lightH] = AFQ_RenderCorticalSurface(im, 'boxfilter', 5,'alpha',.5, 'newfig', 0);
+p = AFQ_RenderCorticalSurface(im, 'boxfilter', 5,'alpha',.5, 'newfig', 0);
 
 
 % Delete the light object and put a new light to the right of the camera

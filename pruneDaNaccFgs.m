@@ -43,7 +43,7 @@ end
 fgIn = fg;
 o_idx=cellfun(@(x) any(abs(x(1,:))>max(abs(roi2.coords(:,1)))+4), fg.fibers, 'UniformOutput',0);
 o_idx = vertcat(o_idx{:});
-fg = getSubFG(fg,find(o_idx==0));
+fgOut = getSubFG(fg,find(o_idx==0));
 
 
 
@@ -51,7 +51,7 @@ fg = getSubFG(fg,find(o_idx==0));
 
 if excludeAboveAC
     
-    fgOut = pruneNaccPathwaysAboveAC(fg, LorR, subject, method);
+    fgOut = pruneNaccPathwaysAboveAC(fgOut, LorR, subject, method);
 
 end
 

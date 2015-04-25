@@ -28,14 +28,24 @@
 clear all
 close all
 
+method = 'mrtrix';
+% method = 'conTrack';
+
 rois = {'caudate','nacc','putamen'};
 
-FG_fnames = {'scoredFG__caudate_DA_top2500_clean.pdb',...
-    'scoredFG__nacc_DA_top2500_clean.pdb','scoredFG__putamen_DA_top2500_clean.pdb'};
 
-nNodes = [32 16 32];
+% string to identify fiber group files? 
+fgFileStr = '_autoclean'; % files are named [target fgFileStr '.pdb']
 
-subjects = getSASubjects('dti');
+
+% string to include on outfile? 
+% outNameStr = fgNameStr;
+outNameStr = '';
+
+
+nNodes = [20 20 20];
+
+subjects = getDTISubjects();
 
 % index for two fiber groups to compare/test (should correspond to order in
 % FG_fnames cell array)

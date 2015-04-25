@@ -13,8 +13,8 @@ subjects=getDTISubjects;
 
 
 % what tracking method? conTrack or mrtrix
-method = 'conTrack';
-% method = 'mrtrix';
+% method = 'conTrack';
+method = 'mrtrix';
 
 
 % define fiber group files to be merged

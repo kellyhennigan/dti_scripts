@@ -112,7 +112,7 @@ for i=1:numel(subjects)
     
     
     % save out xforms and file info
-    save sn_info.mat templateFile inFile outFile sn Vtemplate invDef
+    save sn_info.mat sn invDef inFile outFile 
     
 end
 

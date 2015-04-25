@@ -3,13 +3,13 @@
 clear all
 close all
 
-scaleToTest = 'RD'; % impulsivity
+scaleToTest = 'NS2'; % impulsivity
 scaleStr = 'impulsivity scores';
 
 
-% fgMDir = '/Users/Kelly/dti/data/fgMeasures/mrtrix';
-fgMDir = '/Users/Kelly/dti/data/fgMeasures/conTrack';
-fgMatName = 'caudateL.mat';
+fgMDir = '/Users/Kelly/dti/data/fgMeasures/mrtrix';
+% fgMDir = '/Users/Kelly/dti/data/fgMeasures/conTrack';
+fgMatName = 'naccR_belowAC.mat';
 
 
 fgMeasureToTest = 'MD'; % options are FA, MD, AD, or RD
@@ -106,3 +106,4 @@ corr(scores,best_rd)
 corr(scores,best_ad)
 corr(scores,best_fa)
 
+figure(1)

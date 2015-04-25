@@ -38,7 +38,15 @@ end
 
 %% do it
 
+% figure
+scSize = get(0,'ScreenSize'); % get screensize for pleasant figure viewing :)
+
 fig = setupFig;
+
+% place figure in top right of monitor for more convenient viewing
+pos = get(gcf,'Position');
+set(gcf,'Position',[scSize(3)-pos(3), scSize(4)-pos(4), pos(3), pos(4)])
+
 hold on;
 
 plot(x,y,'.','MarkerSize',20,'color','k');

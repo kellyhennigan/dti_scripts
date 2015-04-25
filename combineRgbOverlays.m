@@ -43,9 +43,8 @@ end
 
 % make sure 2nd to last dim of rgbOverlays is the right size for r,g,b vals
 dim = size(rgbOverlays); % dimensions of rgbOverlays
-if dim(end-1)~=3
-    error(['expecting r,g,b values in dim ' num2str(length(dim)-1) ...
-        ' of rgbOverlays input argument']);
+if ~any(dim==3)
+    error('dont know which dimension has rgb values.');
 end
 
 % define some useful dimension/size variables 

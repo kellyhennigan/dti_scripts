@@ -60,6 +60,12 @@ end
 merged_fg = fgs(1);
 merged_fg.name = merged_fg_name;
 merged_fg.fibers = vertcat(fgs(:).fibers);
+
+
+% merge pathwayInfo if they have the same fields (NOT YET IMPLEMENTED)
+pI_names = fieldnames(merged_fg.pathwayInfo);
+
+
 merged_fg.pathwayInfo=[fgs(:).pathwayInfo];
 
 % clear out params at this point to avoid inaccuracies from combining fgs

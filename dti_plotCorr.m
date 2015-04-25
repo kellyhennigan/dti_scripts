@@ -28,7 +28,16 @@ end
 
 % for f = 1:length(fgMeasures)
 
+% figure
+scSize = get(0,'ScreenSize'); % get screensize for pleasant figure viewing :)
+
+
 fig = figure; hold on;
+
+% place figure in top right of monitor for more convenient viewing
+pos = get(gcf,'Position');
+set(gcf,'Position',[scSize(3)-pos(3), scSize(4)-pos(4), pos(3), pos(4)])
+
 for ii = 1 : nFibers
     h(ii) = plot(fgMeasure(ii,:)','-','Color',[.5 .5 .5],'linewidth',2);
 end
