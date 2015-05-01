@@ -30,17 +30,17 @@ targets = {'naccL'}; % target roi strings
 
 
 % define fiber group to load
-% method = 'conTrack';
-method = 'mrtrix';
+method = 'conTrack';
+% method = 'mrtrix';
 
 
 % string to identify fiber group files? 
-fgNameStr = '_autoclean'; % [targets{j} fgNameStr '.pdb'] should be fgName
+fgNameStr = '_all_autoclean'; % [targets{j} fgNameStr '.pdb'] should be fgName
 
 
 % string to include on outfile? 
 % outNameStr = fgNameStr;
-outNameStr = '';
+outNameStr = '_all';
 
 
 %% do it

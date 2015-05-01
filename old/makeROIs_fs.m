@@ -14,16 +14,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Define base directory, subject folders, freesurfer labels, and ROI names
 
+fslpath='/usr/local/fsl';
+setenv('FSLDIR',fslpath);  % this to tell where FSL folder is
+setenv('FSLOUTPUTTYPE', 'NIFTI_GZ'); % this to tell what the output type would be
+
 % base dir (one above subject directories)
 % baseDir = '/home/kelly/ShockAwe/data/';
 baseDir = '/Users/Kelly/dti/data';
 
 % this should be either nii or nii.gz for nifti files
-f_suffix = '.nii'; 
+f_suffix = '.nii.gz'; 
 
 % subject directories
-subjects = getDTISubjects;
-% subjects = {'sa01','sa13','sa18','sa23','sa22'};
+% subjects = getDTISubjects; 
+
+subjects = {'sa01','sa13','sa18','sa23','sa22'};
     
 %% freesurfer label numbers and roi names %% 
 % 
@@ -43,10 +48,9 @@ subjects = getDTISubjects;
 %     'superiorfrontal';
 %     'frontalpole';
 %     'hippocampus';
-%     'amygdala'};
+%     'amygdala'
+%     'insula'};
 % 
-roiNames = {'insula'};
-labelVals = {'19','55'};
 
 % 
 % labelVals = {'26','58';
@@ -65,7 +69,10 @@ labelVals = {'19','55'};
 %     '1028','2028';
 %     '1032','2032';
 %     '17','53';
-%     '18','54'}; % label values corresponding to the left & right ROIs listed}; % label values corresponding to the left & right ROIs listed
+%     '18','54'
+%     '19','55'}; 
+
+% label values corresponding to the left & right ROIs listed
 % 
 % roiNames = {'ventralDC'};
 
@@ -79,13 +86,13 @@ labelVals = {'19','55'};
 % L and R Caudate - 11/50
 % L and R Putamen - 12/51
 
-% roiNames = {'nacc';
-%     'caudate';
-%     'putamen'};
+roiNames = {'nacc';
+    'caudate';
+    'putamen'};
 % 
-% labelVals = {'26','58';
-%     '11','50';
-%     '12','51'}; % label values corresponding to the left & right ROIs listed
+labelVals = {'26','58';
+    '11','50';
+    '12','51'}; % label values corresponding to the left & right ROIs listed
 
 
 %% Frontal Lobes
@@ -159,7 +166,7 @@ for i = 1:length(subjects)          % subject loop
         roiNameL = [roiNames{j},'L', f_suffix];
         roiNameR = [roiNames{j},'R', f_suffix];
         mergeRois({roiNameL, roiNameR},[roiNames{j},f_suffix]);
-        roiNiftiToMat([roiNames{j},'.nii']);
+        roiNiftiToMat([roiNames{j}, f_suffix],1);
     end
 end
 

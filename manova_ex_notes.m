@@ -1,33 +1,45 @@
 % manova notes/ example
 
 
-%% first load some example data: 
 
-cd '/Users/Kelly/dti/data/sa01/fg_densities/conTrack'
-fdl=readFileNifti('naccL_da_endpts_s3_sn.nii.gz')
-fdr=readFileNifti('naccR_da_endpts_s3_sn.nii.gz')
-imgs{1}=fdl.data; imgs{2}=fdr.data;
 
-CoM = cell2mat(cellfun(@(x) centerofmass(x), imgs,'UniformOutput',0))'; %    get fiber density center of mass
-    
-    
-% get img values, coordinates w/non-zero values, and make a group idx
-D = [];  coords = [];  gi = [];
-    for r=1:2
-        idx=find(imgs{r});    
-        D=[D;imgs{r}(idx)];
-        [i j k]=ind2sub(size(imgs{r}),idx);
-        coords = [coords; [i j k]];
-        gi = [gi; r.* ones(length(idx),1)]; % group index 
-    end
-    
-    acpcCoords = mrAnatXformCoords(fdl.qto_xyz,coords);
-    acpcCoords(:,1) = abs(acpcCoords(:,1));  % get abs() of x-coords
-    
-    
+%% get some sample data: 
+
+rng default;  % For reproducibility
+mu1 = [1 2];
+sigma1 = [3 .2;.2 2];
+mu2 = [-1 -2];
+sigma2 = [2 0; 0 1];
+n1 = 100; n2= 100;
+X = [mvnrnd(mu1,sigma1,n1);mvnrnd(mu2,sigma2,n2)];
+gi = [ones(n1,1);ones(n2,1).*2];  % group index 
+
+% plot it
+figure
+scatter(X(gi==1,1),X(gi==1,2),20,'r+')
+hold on 
+scatter(X(gi==2,1),X(gi==2,2),20,'bo')
+legend('group 1','group 2','Location','NW')
+ 
+% 
+X1 = randn(10,3);
+n1=size(X1,1);
+X2 = X1;  X2(:,1)=X2(:,1)+2;
+n2=size(X2,1);
+X=[X1;X2]
+gi=[ones(n1,1);ones(n2,1).*2];
+
+% plot it
+figure
+scatter(X(gi==1,1),X(gi==1,2),20,'r+')
+hold on 
+scatter(X(gi==2,1),X(gi==2,2),20,'bo')
+legend('group 1','group 2','Location','NW')
+
+
     %% do manova 
     
-    [d,p,stats] = manova1(acpcCoords,gi)
+[d,p,st] = manova1(X,gi)
     
 % manova1 outputs:
 
@@ -175,4 +187,116 @@ Sigma2 = [3 .8; .7 1]; R2 = chol(Sigma2);
 n2=100;
 
 y2 = repmat(mu2,n2,1) + randn(n2,2)*R1;
+
+
+
+%% compare location of 2 fiber groups
+
+rmIdx = 3;
+
+coords2 = acpcCoords;
+coords2(:,:,rmIdx) = [];
+gL(gi==rmIdx)=[];
+gi(gi==rmIdx)=[];
+
+
+% reshape coords to be in long form
+X=reshape(permute(coords2,[1 3 2]),N*2,p);
+
+[d,p,stats]=manova1(X,gL);
+
+[MAOV2] = MAOV2(X,alpha)
+
+
+X1 = [[1:N]';[1:N]'];           % subject
+X2 = [ones(N,1); ones(N,1).*2]; % fiber group
+
+
+
+X = [X1 X2 coords2R];
+
+maov2(X)
+
+
+
+%% use manova for two-sample
+
+
+
+
+
+%% use hotelling ttest
+
+% x,y,z distance 
+coords2_diff = diff(coords2,1,3);
+
+% get stats
+[t2,stats]=getHT2(coords2_diff)
+
+HotellingT2(coords2_diff)
+
+
+x=[acpcCoords(:,1,1),acpcCoords(:,1,2)];
+y=[acpcCoords(:,2,1),acpcCoords(:,2,2)];
+z=[acpcCoords(:,3,1),acpcCoords(:,3,2)];
+
+% acpcCoords = reshape(permute(acpcCoords,[1 3 2]),length(gi),3);
+
+
+
+acpcCoords=acpcCoords-repmat(acpcCoords(:,:,refFG),1,1,3);
+acpcCoords=reshape(acpcCoords
+
+acpcCoords = acpcCoords - repmat(mean(acpcCoords),N,1); % mean centered coords
+
+
+%% do manova test
+
+
+% The function returns d, an estimate of the dimension of the space
+% containing the group means. manova1 tests the null hypothesis that the
+% means of each group are the same n-dimensional multivariate vector, and
+% that any difference observed in the sample X is due to random chance. If
+% d = 0, there is no evidence to reject that hypothesis. If d = 1, then you
+% can reject the null hypothesis at the 5% level, but you cannot reject the
+% hypothesis that the multivariate means lie on the same line. Similarly,
+% if d = 2 the multivariate means may lie on the same plane in
+% n-dimensional space, but not on the same line.
+
+
+fprintf(['\n\n MANOVA test to determine whether there are differences\n' ...
+    'in the location of fiber groups'' midbrain endpoints:\n\n']);
+
+
+[d,p,stats]=manova1(acpcCoords,gL);
+
+fprintf(['\nH0: the fiber groups arise from the same location within the midbrain.\n' ...
+    'i.e., the dimension of the space containing the group means is 0.\n\n']);
+
+fprintf(['\nprob of H0: ' num2str(p(1)) '\n'])
+
+% The eigenvec field is a matrix that defines the coefficients of the
+% linear combinations of the original variables.
+stats.eigvec
+
+% The eigenval field is a vector measuring the ratio of the between-group
+% variance to the within-group variance for the corresponding linear
+% combination. 
+stats.eigval
+
+% The canon field is a matrix of the canonical variable values. Each column
+% is a linear combination of the mean-centered original variables, using
+% coefficients from the eigenvec matrix.
+if (stats.canon-acpcCoords*stats.eigenvec) < .001
+    disp('they are equal!')
+end
+
+
+% A grouped scatter plot of the first two canonical variables shows more
+% separation between groups then a grouped scatter plot of any pair of
+% original variables. 
+c1 = stats.canon(:,1);
+c2 = stats.canon(:,2);
+figure()
+gscatter(c2,c1,gL,[],'oxs')
 

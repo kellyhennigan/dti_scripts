@@ -7,19 +7,24 @@ close all
 dataDir = '/Users/Kelly/dti/data';
 
 
-% fgMat files relative to dataDir
-fgMatFiles = {'fgMeasures/conTrack/DA_nacc_20nodesR.mat',...
-    'fgMeasures/mrtrix/DA_nacc_20nodesR.mat',...
-    'fgMeasures/mrtrix/DA_nacc_20nodesR_iFOD1.mat'};
+target = 'naccL'; 
 
+% fgMat files relative to dataDir
+% fgMatFiles = {['fgMeasures/conTrack/' target '.mat'],...
+%     ['fgMeasures/conTrack/' target '_manclean.mat'],...
+%     ['fgMeasures/mrtrix/' target '.mat']};
+fgMatFiles = {['fgMeasures/conTrack/' target '.mat'],...
+    ['fgMeasures/conTrack/' target '_manclean.mat']};
 
 % strings for plotting
-fgMatStrs = {'conTrack','mrtrix','iFOD1'}; 
+fgMatStrs = {'autoclean','manclean'}; 
 
 % plot colors
+% c =   [0.8275    0.2118    0.5098
+%     0.1490    0.5451    0.8235
+%     0.7591    0.3983    0.0493];
 c =   [0.8275    0.2118    0.5098
-    0.1490    0.5451    0.8235
-    0.7591    0.3983    0.0493];
+    0.1490    0.5451    0.8235];
 
 
 figDir = '/Users/Kelly/dti/figures/contrack_vs_mrtrix';
@@ -43,7 +48,7 @@ for i=1:numel(subjects)
     plot(fa(i,:,j),'color',c(j,:))
     end
     ylabel('FA')
-    title([subjects{i} ' naccR fibers'])
+    title([subjects{i} ' ' target ' fibers'])
     hold off
     subplot(1,2,2); hold on
     for j=1:numel(fgMatFiles)
@@ -52,7 +57,7 @@ for i=1:numel(subjects)
     ylabel('MD')
     legend(fgMatStrs)
     hold off
-    saveas(gcf,[subjects{i} '_naccR.pdf'])
+    saveas(gcf,[subjects{i} '_' target '.pdf'])
     close all
 end
 

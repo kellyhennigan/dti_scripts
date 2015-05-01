@@ -1,4 +1,4 @@
-%% sign test to see if the two fiber clusters defined by the gmm 
+gmm%% sign test to see if the two fiber clusters defined by the gmm 
 %% switch their relative position along the inferior-superior axis (z-coord)
 
 %% define directories and file names, load files

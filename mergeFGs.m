@@ -1,5 +1,5 @@
 
-function merged_fg = mergeFGs(fgs,merged_fg_name)
+function merged_fg = mergeFGs(fgs,merged_fg_name,saveOut)
 % -------------------------------------------------------------------------
 % usage: merge fiber groups
 %
@@ -25,12 +25,15 @@ if notDefined('fgs')
     error('input fgs argument is required');
 end
 
-
 % if no name is given for the merged_fg, make one up
 if notDefined('merged_fg_name')
     merged_fg_name = 'merged_fg';
 end
 
+% default is to not save
+if notDefined('saveOut')
+    saveOut = 0;
+end
 
 % if fgs are filenames, load them
 if iscell(fgs) && ischar(fgs{1})
@@ -61,19 +64,23 @@ merged_fg = fgs(1);
 merged_fg.name = merged_fg_name;
 merged_fg.fibers = vertcat(fgs(:).fibers);
 
+% ** add check to make sure pathway Info has same fields!! (NOT YET IMPLEMENTED)
+% pI_names = fieldnames(merged_fg.pathwayInfo);
 
-% merge pathwayInfo if they have the same fields (NOT YET IMPLEMENTED)
-pI_names = fieldnames(merged_fg.pathwayInfo);
 
-
+% merge pathwayInfo 
 merged_fg.pathwayInfo=[fgs(:).pathwayInfo];
 
-% clear out params at this point to avoid inaccuracies from combining fgs
+% try to merge params in the future (NOT IMPLEMENTED) 
+% for now, ditch them 
 merged_fg.params = {};
 
 
 % save out merged_fg if saveDir is defined
-if exist('saveDir','var')
+if saveOut
+    if ~exist('saveDir','var')
+        saveDir = '';
+    end
     fprintf(['\nsaving out merged fg ' merged_fg.name '...\n']);
     mtrExportFibers(merged_fg,fullfile(saveDir,merged_fg.name));
     fprintf('done.\n\n');

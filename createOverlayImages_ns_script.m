@@ -46,7 +46,6 @@ p = getDTIPaths; cd(p.data);
 % 
 % c_range = [.1 .9]; % range of colormap
 % 
-% ac = 0; % 0 means do autocrop
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % if plotting group t-maps (comment out and see above to plot indivdual
@@ -65,13 +64,12 @@ targets = {'caudate';
 
 fdStr = '_da_endpts_S3_sn_T'; % suffix on input fiber density files
 
-thresh = 3; % for thresholding t-maps
-
-c_range = [3 4]; % range of colormap
+thresh = 3.5; % for thresholding t-maps
 
 scale = 0;  % for log-transforming and scaling fiber counts 
-ac = inf; % inf to NOT do autocrop -this messes things up on group overlays 
-% (I think because of the mni acpc xform)
+
+c_range = [3.55 4]; % range of colormap
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % define more params: 
@@ -80,14 +78,14 @@ cols = getFDColors();
 
 plane=3; % 1 for sagittal, 2 for coronal, 3 for axial
 
-acpcSlices = []; % acpc-coordinate of slice to plot
+acpcSlices = [-10]; % acpc-coordinate of slice to plot
 
 saveFigs = 1; % [1/0 to save out slice image, 1/0 to save out cropped image]
 figDir = [p.figures '/fg_densities/' method];
 figPrefix = 'CNP';
 
 
-t_idx = [3]; % ONLY PLOT THESE FROM TARGET LIST
+t_idx = [1 2 3]; % ONLY PLOT THESE FROM TARGET LIST
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,7 +146,7 @@ for s=1:numel(subjects)
     
         
          % plot fiber density overlay
-        [imgRgbs, olMasks,olVals(j,:),~,acpcSlices] = plotOverlayImage(fd,bg,cols{j},c_range,plane,acpcSlices,0,ac);
+        [imgRgbs, olMasks,olVals(j,:),~,acpcSlices] = plotOverlayImage(fd,bg,cols{j},c_range,plane,acpcSlices,0);
         
         
         % cell array of just rgb values for overlays

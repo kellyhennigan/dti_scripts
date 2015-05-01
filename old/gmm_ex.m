@@ -13,6 +13,9 @@
 % http://www.mathworks.com/help/toolbox/stats/bq_679x-24.html
 % 
 % 
+clear all
+close all
+
 % Gaussian mixture distributions can be used for clustering data, 
 % by realizing that the multivariate normal components of the fitted model 
 % can represent clusters.

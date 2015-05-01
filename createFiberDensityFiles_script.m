@@ -16,11 +16,11 @@ dataDir = '/Users/Kelly/dti/data';
 subjects = getDTISubjects(); 
 
 
-method = 'mrtrix';
-% method = 'conTrack';
-% targets = {'nacc','caudate','putamen','nacc_belowAC'};
+% method = 'mrtrix';
+method = 'conTrack';
+targets = {'naccL'};
 % targets = {'naccL','naccR','caudateL','caudateR','putamenL','putamenR'};
-targets ={'dstriatumL','dstriatumR'};
+
 
 % string to identify fiber group files? 
 fgFileStr = '_autoclean'; % files are named [target fgFileStr '.pdb']
@@ -93,7 +93,7 @@ for i=1:numel(subjects)
         % Smooth the image?
         if smooth
             fd = smooth3(fd, 'gaussian', smooth);
-            outName = [outName '_s' num2str(smooth)];
+            outName = [outName '_S' num2str(smooth)];
         end
         
         

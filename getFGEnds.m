@@ -1,4 +1,4 @@
-function [fg1,fg2]=getFGEnds(fg)
+function [fgOut,endpts]=getFGEnds(fg,nEnds)
 % -------------------------------------------------------------------------
 % usage: this function takes in a fiber group and returns two separate
 % fiber group structs that contain the first and last endpoints of each
@@ -6,25 +6,39 @@ function [fg1,fg2]=getFGEnds(fg)
 % 
 % INPUT:
 %   fg - fiber group structure 
-%   
+%   nEnds - just first or both endpoints (so 1 or 2)
 % 
 % OUTPUT:
-%   fg1 - exact same as fg, except each fiber cell contains only the 1st
-%   endpoint coordinates of each fiber. 
-%   fg2 - same as fg1 except for the 2nd fiber endpoint.
+%   fgOut - exact same as fg, except each fiber cell contains only the 
+%           endpoint coordinates of each fiber. 
+%   endpts - endpt coordinates of the fiber group returned as a M x N
+%           matrix, where each column contains the desired endpoints for a
+%           single fiber.
 % 
-% NOTES:
 % 
 % author: Kelly, kelhennigan@gmail.com, 23-Apr-2015
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% if nEnds isn't given, just give the first endpoint coord
+if notDefined('nEnds')
+    nEnds = 1; 
+end
+
+
 % get fibers' first endpoints:
-fg1=fg;  
-fg1.fibers = cellfun(@(x) x(:,1), fg1.fibers,'UniformOutput',0);
+if nEnds==1
+ fgOut=fg;  
+ fgOut.fibers = cellfun(@(x) x(:,1), fgOut.fibers,'UniformOutput',0);
+ endpts = [fgOut.fibers{:}];
+ 
+ 
+% get fibers' first and last endpoints:
+elseif nEnds==2
+    fgOut=fg;  
+    fgOut.fibers = cellfun(@(x) x(:,[1,end]), fgOut.fibers,'UniformOutput',0);
+    endpts = cell2mat(cellfun(@(x) reshape(x,6,1), fgOut.fibers, 'UniformOutput',0)');
+
+end
 
 
-% get fibers' last endpoints:
-fg2=fg;  
-fg2.fibers = cellfun(@(x) x(:,end), fg2.fibers,'UniformOutput',0);
-        

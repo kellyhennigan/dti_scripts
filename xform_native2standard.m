@@ -108,6 +108,13 @@ switch fType
         
         snImg = mrAnatResliceSpm(ns_file.data, sn, bb, mm, [1 1 1 0 0 0], 0);
         
+        % if there are nan voxels in the spatially normed volume and there
+        % aren't in the native space volume, set them to zero. 
+        if isempty(find(isnan(ns_file.data))) && ~isempty(find(isnan(snImg)))
+            fprintf('\n\n setting nan voxels in spatially normed volume to 0...\n\n');
+            snImg(isnan(snImg))=0;
+        end
+
         % define new outname
         outName = [strrep(strrep(ns_file.fname,'.nii',''),'.gz','') '_sn.nii.gz'];
 

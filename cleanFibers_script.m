@@ -15,19 +15,23 @@
 clear all
 close all
 
-subjects=getDTISubjects; 
-dataDir = '/Users/Kelly/dti/data';
+% get experiment-specific paths and cd to main data directory
+p=getDTIPaths(); cd(p.data);
 
-LorR = 'R';
+
+subjects=getDTISubjects;
+
+LorR = 'L';
 
 
 seed = 'DA';  % define seed roi
-target = 'striatum';
+target = ['nacc' LorR];
 
-% method = 'conTrack';
-% fgName = ['scoredFG__' target '_DA_top2500_' LorR '.pdb']; 
-method = 'mrtrix';
-fgName = ['d' target LorR '.tck']; 
+method = 'conTrack';
+fgName = 'scoredFG__nacc_DA_top2500_L.pdb';
+
+% method = 'mrtrix';
+% fgName = ['d' target LorR '.tck']; 
 
 
 % define parameters for pruning fibers
@@ -39,17 +43,21 @@ M='median';
 count = 1;
 show = 0; % 1 to plot each iteration, 0 otherwise
 
-outFgName = [strrep(fgName,'.tck','') '_autoclean']; % name for out fg file
+% outFgName = [strrep(fgName,'.tck','') '_autoclean']; % name for out fg file
+% outFgName = [strrep(fgName,'.pdb','') '_autoclean']; % name for out fg file
+outFgName = [target '_all_autoclean'];
+
 
 %% DO IT
 
 
 fprintf('\n\n working on %s fibers for roi %s...\n\n',method,target);
+i=1
 for i=1:numel(subjects)
     
     subject = subjects{i}; 
     fprintf(['\n\nworking on subject ' subject '...\n\n'])
-    subjDir = fullfile(dataDir,subject); cd(subjDir);
+    subjDir = fullfile(p.data,subject); cd(subjDir);
     
     % load seed and target rois
     load(fullfile('ROIs',[seed '.mat'])); roi1 = roi;
@@ -69,11 +77,15 @@ for i=1:numel(subjects)
     [fg,flipped] = AFQ_ReorientFibers(fg,roi1,roi2);
     
     
-    % if target roi is the nacc, then do some extra pruning
+%     % if target roi is the nacc, then do some extra pruning
     if strcmp(target(1:4),'nacc')
-        fg = pruneDaNaccFgs(fg,roi1,roi2,subject,method,LorR,1,0);
+        fg = pruneDaNaccFgs(fg,roi1,roi2,subject,method,LorR,0,0);
     end
     
+    % if target roi is striatum, then do some extra pruning
+    if strcmp(target(1:4),'stri')
+        fg = pruneDaStrFgs(fg,roi1,roi2,method,0);
+    end
     
     % remove outliers and save out cleaned fiber group
     if ~isempty(fg.fibers)
@@ -88,7 +100,7 @@ for i=1:numel(subjects)
         
         nFibers_clean(i,1) = numel(cleanfg.fibers); % keep track of the final # of fibers
         
-        AFQ_RenderFibers(cleanfg,'tubes',0,'color',[1 0 0]);
+        AFQ_RenderFibers(cleanfg,'tubes',0,'numfibers',500,'color',[1 0 0]);
         title(gca,subject);
        
         mtrExportFibers(cleanfg,cleanfg.name);  % save out cleaned fibers

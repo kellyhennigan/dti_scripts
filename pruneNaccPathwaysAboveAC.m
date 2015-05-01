@@ -1,4 +1,4 @@
-function fgOut = pruneNaccPathwaysAboveAC(fgIn, LorR, subject, method)
+function idx = pruneNaccPathwaysAboveAC(fg, LorR, subject, method)
 
 % -------------------------------------------------------------------------
 % usage: omit pathways coming from the midbrain that enter the
@@ -14,7 +14,7 @@ function fgOut = pruneNaccPathwaysAboveAC(fgIn, LorR, subject, method)
 %
 %
 % OUTPUT:
-%   fgOut - nacc-DA pathways going below the AC
+%   idx - idx indicating fibers that go above the AC w/1 and below w/0
 %
 %
 % NOTES:
@@ -39,46 +39,83 @@ function fgOut = pruneNaccPathwaysAboveAC(fgIn, LorR, subject, method)
 fprintf('\n\n omitting fibers that go above the AC...\n\n');
 
 y_eval = 0;
-z_thresh = 0;
+z_thresh = 0; % fibers that are above this at the y-coord y-eval will be excluded
+
+method = 'aboveAC'; 
 
 
-switch method
+% subject specific cases to distinguish between fibers that go above and
+% below the AC:
+
+switch [method,LorR]
     
-    case 'conTrack'
-        if strcmp(subject,'sa18')
+    
+    case ['conTrack','L']
+        
+        
+        if strcmp(subject,'sa28')
             z_thresh = -3;
-        elseif strcmp(subject,'sa28') && strcmpi(LorR,'L')
-            z_thresh = -3;
-        elseif strcmp(subject,'sa34') && strcmpi(LorR,'L')
+        elseif strcmp(subject,'sa01')
+            z_thresh = 2;
+        elseif strcmp(subject,'sa19')
+            z_thresh = 3;
+        elseif strcmp(subject,'sa27')
+            z_thresh = 3;
+        elseif strcmp(subject,'sa20')
+            z_thresh = 2;
+        elseif strcmp(subject,'sa23')
+            z_thresh = 7;
+        elseif strcmp(subject,'sa24')
+            z_thresh = 15;
+        elseif strcmp(subject,'sa34')
             z_thresh = -2;
-        elseif strcmp(subject,'sa24') && strcmpi(LorR,'L')
-            z_thresh = 10;
+        elseif strcmp(subject,'sa31')
+            z_thresh = -1;
+        elseif strcmp(subject,'sa13')
+            z_thresh = 4;
+        end
+        
+    case ['conTrack','R']
+        
+        
+        if strcmp(subject,'sa11')
+            z_thresh = 1;
+        elseif strcmp(subject,'sa13')
+            z_thresh = 1;
+        elseif strcmp(subject,'sa18')
+            z_thresh = -3;
         end
         
         
         
-        % if nacc tracked without AC exclude ROI:
+    case ['mrtrix','L']
         
-    case 'mrtrix'
-        if strcmp(subject,'sa13') && strcmpi(LorR,'R')
-            y_eval = -4;
-        elseif strcmp(subject,'sa20') && strcmpi(LorR,'L')
+        if strcmp(subject,'sa20')
             y_eval = -5;
-        elseif strcmp(subject,'sa20') && strcmpi(LorR,'R')
+        elseif strcmp(subject,'sa27')
+            z_thresh = 4;
+        elseif strcmp(subject,'sa30')
+            z_thresh = 4;
+        elseif strcmp(subject,'sa34')
+            z_thresh = 5;
+        end
+        
+        
+    case ['mrtrix','R']
+        
+        
+        if strcmp(subject,'sa13')
+            y_eval = -4;
+        elseif strcmp(subject,'sa20')
             z_thresh = -1;
-        elseif strcmp(subject,'sa25') && strcmpi(LorR,'R')
+        elseif strcmp(subject,'sa25')
             z_thresh = 3;
-        elseif strcmp(subject,'sa26') && strcmpi(LorR,'R')
+        elseif strcmp(subject,'sa26')
             z_thresh = -3;
         elseif strcmp(subject,'sa27')
             z_thresh = 4;
-        elseif strcmp(subject,'sa30') && strcmpi(LorR,'L')
-            z_thresh = 4;
-        elseif strcmp(subject,'sa31') && strcmpi(LorR,'R')
+        elseif strcmp(subject,'sa31')
             z_thresh = 8;
-        elseif strcmp(subject,'sa34') && strcmpi(LorR,'L')
-            z_thresh = 5;
-            
         end
         
 end
@@ -115,18 +152,21 @@ end
 %% get the pathways below the AC
 
 % temporarily clip all pathways in the coronal plane at the AC
-fg_clipped=dtiClipFiberGroup(fgIn,[],[y_eval 80],[]);
+fg_clipped=dtiClipFiberGroup(fg,[],[y_eval 80],[]);
 
 
 % get the z-coord of where the clipped fibers hit the coronal plane where the AC is
 zc=cellfun(@(x) x(3,end), fg_clipped.fibers);
 
 
-% fibers below the AC
-fgOut = getSubFG(fgIn,zc<z_thresh);
+% idx of fibers that go above the AC
+idx = zc>=z_thresh;
 
-
-% fibers that go above the AC
-fg2 = getSubFG(fgIn,zc>=z_thresh);
+% % fibers below the AC
+% fgOut = getSubFG(fgIn,zc<z_thresh);
+%
+%
+% % fibers that go above the AC
+% fg2 = getSubFG(fgIn,zc>=z_thresh);
 
 

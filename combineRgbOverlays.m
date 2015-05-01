@@ -15,6 +15,11 @@ function outOl = combineRgbOverlays(rgbOverlays,w)
 %       locations would be in dim(1) and dim(2), rgb vals per pixel in
 %       dim(3), and the different overlay maps for that image would be
 %       in dim(4).
+
+%       If just 1 rgb img is given, e.g., size(rgbOverlay) = 100 100 3,
+%       then outOl will be the same as the rgbOverlay input (nothing to
+%       combine).
+
 % 
 %   w - (optional) these are the weights associated with each map.
 %       Must have the same dimensions as rgbOverlays except for just 1
@@ -46,6 +51,14 @@ dim = size(rgbOverlays); % dimensions of rgbOverlays
 if ~any(dim==3)
     error('dont know which dimension has rgb values.');
 end
+
+% dont do anything is only 1 overlay is given
+if numel(dim)==3 || dim(4)==1
+    fprintf('\n\nonly one overlay image given - returning input rgbOverlay.\n\n');
+    outOl = rgbOverlays; 
+    return
+end
+
 
 % define some useful dimension/size variables 
 nOls = dim(end);

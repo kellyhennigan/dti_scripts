@@ -29,8 +29,9 @@
 clear all
 close all
 
-% define main data directory
-dataDir = '/Users/Kelly/dti/data'; 
+
+% get experiment-specific paths & cd to main data dir
+p = getDTIPaths; cd(p.data);
 
 
 % define subjects to process

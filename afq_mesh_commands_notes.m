@@ -19,7 +19,12 @@ load(fullfile(subjDir,'ROIs/parsorbitalisL.mat'));
 % fiber group of interest
 fg = mtrImportFibers(fullfile(subjDir,'fibers/mrtrix/parsopercularisL_man_clean.pdb'));
 
+% note: to move with arrow keys: 
+cameratoolbar('Show');
+cameratoolbar('SetMode','orbit');
 
+lightH = camlight('right');
+lighting('gouraud');
 
 
 %% plot a cortex mesh 

@@ -13,7 +13,7 @@ plotClusters = 0; % set to 1 for plots
 
 %% get data
 
-cd '/home/kelly/data/DTI';
+cd '/Users/Kelly/dti/data';
 baseDir = pwd;
 
 % load data
@@ -23,7 +23,7 @@ load('gmm_data.mat'); % this should load a subjects cell array along with data (
 %% fit a k component Gaussian mixture model
 
 % for i = 1:length(subjects)
-  for i=7;
+  for i=1;
     
     fg_ends = endpts{i};
     fg_ends_trueX = endpts_trueX{i};
@@ -106,7 +106,7 @@ load('gmm_data.mat'); % this should load a subjects cell array along with data (
     
     if plotClusters == 1
         figsDir = fullfile(baseDir, 'gmm_figs');
-        gmm_plots(figsDir, fg_ends_trueX, component, i);
+        gmm_plots(figsDir, fg_ends_trueX, component, subject);
     end
     %     clear subjDir fibersDir fg_ends fg_ends_trueX gm idx cluster c fiberCluster
     

@@ -1,4 +1,4 @@
-function [h,mov] = rotateMesh(h,rot_degs,ni,inMov)
+function [h,mov] = rotateMesh(h,rot_degs,i,inMov)
 % -------------------------------------------------------------------------
 % usage: rotate a camera around a mesh. Mesh must be in the current
 % figure/current axis.
@@ -9,7 +9,7 @@ function [h,mov] = rotateMesh(h,rot_degs,ni,inMov)
 %              h.l - light object handle
 %              h.msh - mesh object handle 
 %   rot_degs - 1x2 vector specifying which way to rotate camera (in degrees)
-%   ni - number of times to perform the rot_degs rotation
+%   i - number of times to perform the rot_degs rotation
 %   inMov - frame by frame movie that can be appended to 
 %
 % 
@@ -35,8 +35,8 @@ ry = rot_degs(2); % degrees to rotate along the x-axis
 
 
 % if # of iterations isn't specified, iterate 10 times
-if notDefined('ni')
-    ni=10;
+if notDefined('i')
+    i=10;
 end
 
 
@@ -48,7 +48,7 @@ end
 % and capture each rotation as a frame in the video. After each rotation we
 % move the light so that it follows the camera and we set the camera view
 % angle so that matlab maintains the same camera distance.
-for i = 1:ni
+for ii = 1:i
     
     % Rotate the camera 5 degrees down
     camorbit(rx,ry);
@@ -60,7 +60,7 @@ for i = 1:ni
     camlight(h.l,'right');
     
     % Capture the current figure window as a frame in the video
-    mov(i)=getframe(gcf);
+    mov(ii)=getframe(gcf);
     
 end
 

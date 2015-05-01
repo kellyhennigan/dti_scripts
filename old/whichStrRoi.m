@@ -1,28 +1,32 @@
-function theRoi = whichStrRoi(subj,coords)
+function [roi_idx,dist] = closestRoi(coords,roiDir,roiNames)
 
 % this function takes a subject string (directory name) and a set of
-% coordinates and returns which of the NAcc, Caudate, or Putamen ROIs the
+% coordinates and returns the name of the striatum ROI that the coordinate 
+% is closest to/falls into. (betweclosest roiof the NAcc, Caudate, or Putamen ROIs the
 % coordinates are in.  If N points (gmm means), coords should be a N x 3 array
 % with each row containing x,y,z coordinate values for a point.
 
 % assumes the coordinates values given in coords are in the same coord
 % system as the loaded ROIs
+%%
 
-roiNames = {'NAcc','Caudate','Putamen'};
-
-baseDir = '/home/kelly/data/DTI/';
+baseDir = '/Users/Kelly/dti/data';
 
 roiDir = fullfile(baseDir, subj, 'ROIs');
 
-cd(roiDir);
 
-for j = 1:length(roiNames)
-    roiFileName = [roiNames{j},'_fs.mat'];
-    rois(j) = load(roiFileName);
+
+for j = 1:numel(roiNames)
+    load(fullfile(roiDir,[roiNames{j},'.mat'])); % loads roi.coords
+    [dist(j),~] =  pdist2(roi.coords,coords,'euclidean','Smallest',1);
 end
+
+
 
 %% this is going to be embarrassingly clunky.  Jus get over it and write
 %% the damn thing.
+
+[D,I] = pdist2(X,Y,distance,'Smallest',K)
 
 coords = round(coords);
 

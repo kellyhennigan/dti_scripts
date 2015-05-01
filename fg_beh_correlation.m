@@ -7,9 +7,9 @@ scaleToTest = 'NS2'; % impulsivity
 scaleStr = 'impulsivity scores';
 
 
-fgMDir = '/Users/Kelly/dti/data/fgMeasures/mrtrix';
-% fgMDir = '/Users/Kelly/dti/data/fgMeasures/conTrack';
-fgMatName = 'naccR_belowAC.mat';
+% fgMDir = '/Users/Kelly/dti/data/fgMeasures/mrtrix';
+fgMDir = '/Users/Kelly/dti/data/fgMeasures/conTrack';
+fgMatName = 'naccL_all.mat';
 
 
 fgMeasureToTest = 'MD'; % options are FA, MD, AD, or RD
@@ -20,8 +20,9 @@ saveFigs =0;   % 1 to save figs to outDir otherwise 0
 outDir = '/Users/Kelly/dti/figures/fg_beh_corr';
 
 
-omit_subs = {'sa19','sa28'};
+ omit_subs = {'sa19','sa28'};
 
+% omit_subs = { };
 
 
 %%  get fiber group measures & tci data
