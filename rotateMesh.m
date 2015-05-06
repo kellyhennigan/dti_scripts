@@ -39,15 +39,19 @@ if notDefined('i')
     i=10;
 end
 
+% if a light object wasn't given, create one 
+if ~isfield(h,'l') 
+    h.l = camlight('right');
+end
 
 % rotate a mesh while keeping the camera the same distance (required for
 % movies) and the light in a good spot. 
 
 
-% These next lines of code perform the specific rotations that I desired
-% and capture each rotation as a frame in the video. After each rotation we
-% move the light so that it follows the camera and we set the camera view
-% angle so that matlab maintains the same camera distance.
+% These next lines of code perform the desired rotations and capture each
+% rotation as a frame in the video. After each rotation we move the light
+% so that it follows the camera and we set the camera view angle so that
+% matlab maintains the same camera distance.
 for ii = 1:i
     
     % Rotate the camera 5 degrees down
@@ -69,4 +73,9 @@ end
 if ~notDefined('inMov')
     mov = cat(2,inMov,mov);
 end
+
+
+% make the figure rotatable
+cameratoolbar('Show');  cameratoolbar('SetMode','orbit');
+
 

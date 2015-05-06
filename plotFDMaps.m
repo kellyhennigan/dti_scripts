@@ -1,10 +1,10 @@
-function h = plotFDMaps(rgbImg,plane,acpcSlice,saveFig,figDir,figPrefix,subjStr)
+function [h,figName] = plotFDMaps(slImg,plane,acpcSlice,saveFig,figDir,figPrefix,subj)
 % -------------------------------------------------------------------------
 % usage: this function handles all the desired formatting specific to
 % plotting fiber density overlay images
 %
 % INPUT:
-%   rgbImg - MxNx3 image w/rgb vals in the 3rd dim
+%   slImg - MxNx3 image w/rgb vals in the 3rd dim
 % 	plane and acpcSlice are just used for labeling, etc.
 %
 %   saveFig - if not defined, its set to [0 0]. Can be:
@@ -19,15 +19,15 @@ function h = plotFDMaps(rgbImg,plane,acpcSlice,saveFig,figDir,figPrefix,subjStr)
 %   hf - figure handle
 %
 % NOTES:
-% h = plotFDMaps(rgbImg,plane,acpcSlice,
+% h = plotFDMaps(slImg,plane,acpcSlice,
 % author: Kelly, kelhennigan@gmail.com, 18-Apr-2015
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 
 
-if notDefined('rgbImg') || size(rgbImg,3) ~=3
-    error('must provide rgbImg w/rgb vals in the 3rd dim');
+if notDefined('slImg') || size(slImg,3) ~=3
+    error('must provide slImg w/rgb vals in the 3rd dim');
 end
 
 if notDefined('plane')
@@ -91,13 +91,13 @@ scSize = get(0,'ScreenSize'); % get screensize to place fig in upper right corne
 pos = get(gcf,'Position');
 set(gcf,'Position',[scSize(3)-pos(3), scSize(4)-pos(4), pos(3), pos(4)]) % put the figure in the upper right corner of the screen
 
-image(rgbImg)
+image(slImg)
 axis equal; axis off;
 set(gca,'Position',[0,0,1,1]);
 
-% text(size(rgbImg,2)-20,size(rgbImg,1)-20,[planeStr,num2str(acpcSlice)],'color',[1 1 1])
+% text(size(slImg,2)-20,size(slImg,1)-20,[planeStr,num2str(acpcSlice)],'color',[1 1 1])
 
-figName = [figPrefix subjStr '_' planeStr num2str(acpcSlice)];
+figName = [figPrefix subj '_' planeStr num2str(acpcSlice)];
 
 
 %% save figure?
@@ -117,42 +117,44 @@ end
 %% cropped fig
 
 
-midpt=ceil(size(rgbImg)./2);
-cr = [midpt(1)-29, midpt(1)+30]; % crop rows (take mid horizontal strip, 60px tall)
-cc = [midpt(2)-29, midpt(2)+30]; % crop columns (mid vertical strip, 60px wide)
-
-switch plane
-    
-    case 1 % sagittal
-        
-        cc  =cc+10; % (looks better)
-        croppedImg =rgbImg(cr(1):cr(2),cc(1):cc(2),:);
-        
-    case 2  % coronal
-        
-        croppedImg =rgbImg(cr(1):cr(2),cc(1):cc(2),:);
-        
-    case 3
-        
-        croppedImg =rgbImg(cr(1):cr(2),cc(1):cc(2),:);
-        
-end
-
-
-% plot it
-h(2) = figure;
-
-pos = get(gcf,'Position');
-set(gcf,'Position',[scSize(3)-pos(3), scSize(4)-pos(4), pos(3), pos(4)]) % put the figure in the upper right corner of the screen
-image(croppedImg)
-axis equal; axis off;
-set(gca,'Position',[0,0,1,1]);
-
-
 if saveFig(2)==1  % them plot and save
     
     croppedFigName = [figName '_cropped'];
     fprintf(['\n\n saving out cropped fig ' figName '...']);
+    
+    
+    midpt=ceil(size(slImg)./2);
+    cr = [midpt(1)-29, midpt(1)+30]; % crop rows (take mid horizontal strip, 60px tall)
+    cc = [midpt(2)-29, midpt(2)+30]; % crop columns (mid vertical strip, 60px wide)
+    
+    switch plane
+        
+        case 1 % sagittal
+            
+            cc  =cc+10; % (looks better)
+            croppedImg =slImg(cr(1):cr(2),cc(1):cc(2),:);
+            
+        case 2  % coronal
+            cr = cr+15;
+            croppedImg =slImg(cr(1):cr(2),cc(1):cc(2),:);
+            
+        case 3
+            
+            croppedImg =slImg(cr(1):cr(2),cc(1):cc(2),:);
+            
+    end
+    
+    
+    % plot it
+    h(2) = figure;
+    
+    pos = get(gcf,'Position');
+    set(gcf,'Position',[scSize(3)-pos(3), scSize(4)-pos(4), pos(3), pos(4)]) % put the figure in the upper right corner of the screen
+    image(croppedImg)
+    axis equal; axis off;
+    set(gca,'Position',[0,0,1,1]);
+    
+    
     
     %     print(gcf, '-depsc', '-tiff', '-loose', '-r300', '-painters', fullfile(figDir,[figName '.eps']));
     saveas(h(2),fullfile(figDir,croppedFigName),'pdf');

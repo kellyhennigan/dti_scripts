@@ -28,11 +28,11 @@ targets = {'caudateL','caudateR';
     'putamenL','putamenR'};
 
 
-CoMcoordsL = getFDCoMCoords(targetsL, method); 
+CoMcoords = getFDCoMCoords(targets, method); 
 CoMcoordsR = getFDCoMCoords(targetsR, method); 
 
    
-cols=getFDColors; % fd colors   
+cols=getDTIColors(1:3); % fd colors   
 
 
 %% do it
@@ -41,28 +41,11 @@ cols=getFDColors; % fd colors
 % render a DA ROI mesh 
 msh = AFQ_meshCreate(da,'alpha',.7);
 
-
-% h.msh = afq_plotPointsOnMesh(msh, coords(:,s), colors, crange);
-% h=afq_renderMesh(h.msh)
-% axis off
-% [h,mov] = rotateMesh(h,[10,10],10);
-
-for j=1:3
-    
-    col = cols{j}(5,:);
-    coordsL = CoMcoordsL{j}';
-    coordsR = CoMcoordsR{j}';
-    
-for s=1:24
-    
-msh_idxL = nearpoints(coordsL(:,s), msh.vertex.origin');
-msh.tr.FaceVertexCData(msh_idxL,:) = col;
-
-msh_idxR = nearpoints(coordsR(:,s), msh.vertex.origin');
-msh.tr.FaceVertexCData(msh_idxR,:) = col;
-
-end
-
+msh_idx = cell2mat(cellfun(@(x) nearpoints(x', msh.vertex.origin'), CoMcoords, 'UniformOutput',0))';
+for j=1:size(msh_idx,2)
+    for i=1:size(msh_idx,1)
+        msh.tr.FaceVertexCData(msh_idx(i,j),:) = cols(j,:);
+    end
 end
 
 h=afq_renderMesh(msh)

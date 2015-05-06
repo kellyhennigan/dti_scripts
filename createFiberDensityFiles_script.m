@@ -13,7 +13,7 @@ close all
 
 dataDir = '/Users/Kelly/dti/data';
 
-subjects = getDTISubjects(); 
+subjects = getDTISubjects(); subjects = {'sa24'};
 
 
 % method = 'mrtrix';
@@ -69,7 +69,7 @@ for i=1:numel(subjects)
         
         
         % load fiber group
-        fg = mtrImportFibers(fullfile('fibers',method,[targets{j} fgFileStr '.pdb']));
+        fg = fgRead(fullfile('fibers',method,[targets{j} fgFileStr '.pdb']));
             
         
         % define out name for fiber density file

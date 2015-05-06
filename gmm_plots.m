@@ -35,12 +35,11 @@ colormap(mycolors);
 
 %% make some plots
 
-
 %% 3D scatter plots
 % scatter3(fg_ends(:,1), fg_ends(:,2), fg_ends(:,3),5,mycolors(5,:));
 fig = figure
 clf
-subplot(1,2,1);
+subplot(2,2,1);
 for c = 1:length(cl)
     scatter3(endpts(cl{c},1), endpts(cl{c},2), endpts(cl{c},3),10, mycolors(c,:),'filled');
     hold on
@@ -52,7 +51,7 @@ cameratoolbar('Show');  cameratoolbar('SetMode','orbit');
 
 hold off
 %     legend('Cluster 1','Cluster 2','Location','NW')
-subplot(1,2,2);
+subplot(2,2,2);
 for c = 1:length(cl)
     scatter3(endpts(cl{c},4), endpts(cl{c},5), endpts(cl{c},6),10, mycolors(c,:),'filled');
     hold on
@@ -64,70 +63,39 @@ title ('striatum endpoints')
 hold off
 
 
-
-
-
-% %% 3D scatter plots
-% % scatter3(fg_ends(:,1), fg_ends(:,2), fg_ends(:,3),5,mycolors(5,:));
-% fig = figure
-% clf
-% subplot(2,2,1);
-% for c = 1:length(cl)
-%     scatter3(endpts(cl{c},1), endpts(cl{c},2), endpts(cl{c},3),10, mycolors(c,:),'filled');
-%     hold on
-%     xlabel('x'), ylabel('y'), zlabel('z')
-% end
-% title('DA endpoints');
-% % make the figure rotatable
-% cameratoolbar('Show');  cameratoolbar('SetMode','orbit');
-% 
-% hold off
-% %     legend('Cluster 1','Cluster 2','Location','NW')
-% subplot(2,2,2);
-% for c = 1:length(cl)
-%     scatter3(endpts(cl{c},4), endpts(cl{c},5), endpts(cl{c},6),10, mycolors(c,:),'filled');
-%     hold on
-%     xlabel('x'), ylabel('y'), zlabel('z')
-% end
-% % make the figure rotatable
-% cameratoolbar('Show');  cameratoolbar('SetMode','orbit');
-% title ('striatum endpoints')
-% hold off
-% 
-% 
-% %% 2D scatter plot at y=-16 for DA ROI and y=0 for striatum ROI
-% %     yDA = (endpts(:,2) >= -16.5 & endpts(:,2) < -15.5);
-% %     y1{1} = (yDA & cl{c});
-% %     y1{2} = (yDA & cl{c});
-% %     yStr = (endpts(:,5) >= -1 & endpts(:,5) < 1);
-% %     y2{1} = (yStr & cl{c});
-% %     y2{2} = (yStr & cl{c});
-% %
-% % coronal
-% subplot(2,2,3);
-% for c = 1:length(cl)
-%     scatter(endpts(cl{c},1), endpts(cl{c},3),10, mycolors(c,:));
-%     hold on
-% end
-% xlabel('x'), ylabel('z')
-% title('DA endpts - coronal view')
-% hold off
-% %     legend('Cluster 1','Cluster 2','Location','NW')
-% subplot(2,2,4);
-% for c = 1:length(cl)
-%     scatter(endpts(cl{c},4), endpts(cl{c},6),10, mycolors(c,:));
-%     hold on
-% end
-% xlabel('x'), ylabel('z')
-% title('Striatum endpts - coronal view')
-% hold off
-% legend('Cluster 1','Cluster 2','Location','NW');
-% % save plot
-% cd(figsDir)
-% figname = (['gmm_',num2str(length(cl)),'cls_' subject]);
-% saveas(fig, figname, 'epsc');
-% saveas(fig, figname, 'jpg');
-% end
+%% 2D scatter plot at y=-16 for DA ROI and y=0 for striatum ROI
+%     yDA = (endpts(:,2) >= -16.5 & endpts(:,2) < -15.5);
+%     y1{1} = (yDA & cl{c});
+%     y1{2} = (yDA & cl{c});
+%     yStr = (endpts(:,5) >= -1 & endpts(:,5) < 1);
+%     y2{1} = (yStr & cl{c});
+%     y2{2} = (yStr & cl{c});
+%
+% coronal
+subplot(2,2,3);
+for c = 1:length(cl)
+    scatter(endpts(cl{c},1), endpts(cl{c},3),10, mycolors(c,:));
+    hold on
+end
+xlabel('x'), ylabel('z')
+title('DA endpts - coronal view')
+hold off
+%     legend('Cluster 1','Cluster 2','Location','NW')
+subplot(2,2,4);
+for c = 1:length(cl)
+    scatter(endpts(cl{c},4), endpts(cl{c},6),10, mycolors(c,:));
+    hold on
+end
+xlabel('x'), ylabel('z')
+title('Striatum endpts - coronal view')
+hold off
+legend('Cluster 1','Cluster 2','Location','NW');
+% save plot
+cd(figsDir)
+figname = (['gmm_',num2str(length(cl)),'cls_' subject]);
+saveas(fig, figname, 'epsc');
+saveas(fig, figname, 'jpg');
+end
 
 
 

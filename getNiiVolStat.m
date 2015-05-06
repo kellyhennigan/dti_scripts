@@ -5,7 +5,7 @@ function desiredStat = getNiiVolStat(vol,xform,desiredStatStr)
 % takes a 3d volume of data and an xform instead of a nifti struct.
 
 % INPUT:
-%   vol - 3d volume of data
+%   vol - 3d volume of data 
 %   xform - 4x4 xform from img to acpc space. If not given, returned
 %               coords will be in img space. 
 %   desiredStatStr - string specifying what stat is desired. Options are listed
@@ -20,6 +20,8 @@ function desiredStat = getNiiVolStat(vol,xform,desiredStatStr)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
+
+
 
 % if no xform is given, return img coords
 if notDefined('xform')
@@ -45,7 +47,7 @@ case 'max'  % return acpc coords of max voxel
     desiredStat = [max_coords,max_val];
     
     
-case 'mean_coords'  % return mean acpc coords 
+case 'mean'  % return mean acpc coords 
 
     [i j k]=ind2sub(size(vol),find(vol));
     desiredStat = round(mrAnatXformCoords(xform,mean([i j k])));
