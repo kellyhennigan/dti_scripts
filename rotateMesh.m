@@ -47,6 +47,7 @@ end
 % rotate a mesh while keeping the camera the same distance (required for
 % movies) and the light in a good spot. 
 
+ax=get(h.l,'Parent'); % get axes handle
 
 % These next lines of code perform the desired rotations and capture each
 % rotation as a frame in the video. After each rotation we move the light
@@ -55,10 +56,10 @@ end
 for ii = 1:i
     
     % Rotate the camera 5 degrees down
-    camorbit(rx,ry);
+    camorbit(ax,rx,ry);
     
     % Set the view angle so that the image stays the same size
-    set(gca,'cameraviewangle',8);
+    set(ax,'cameraviewangle',8);
     
     % Move the light to follow the camera
     camlight(h.l,'right');

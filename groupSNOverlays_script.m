@@ -30,11 +30,11 @@ subjects=getDTISubjects;
 
 
 % specify directory & files to xform, relative to subject's dir
-method = 'conTrack';
+method = 'mrtrix';
 
 
 % strings specifying left and right fiber density files
-roiStr = 'nacc'; 
+roiStrs = {'caudate';'nacc';'putamen'}; 
 LR = {'L','R'}; 
 fdStr = '_da_endpts_S3';
 
@@ -45,6 +45,13 @@ outDir = fullfile('group_sn','fg_densities',method);
 
 
 %% do it
+
+r=1;
+for r=1:numel(roiStrs)
+
+
+    roiStr = roiStrs{r};
+    
 
 s=1
 for s=1:numel(subjects)
@@ -74,7 +81,7 @@ for s=1:numel(subjects)
     
     % calculate CoM for L and R fiber density maps. It's probably best to
     % consistently use CoM coords from subjects' native space. But
-    % calculate them here anyway save, just in case. 
+    % calculate them here anyway and save, just in case. 
     imgCoM = cellfun(@centerofmass,fdImgLR,'UniformOutput',0); % CoM in img coords
     CoM(s,1:2) = cellfun(@(x) mrAnatXformCoords(fdsn(1).qto_xyz,x), imgCoM, 'UniformOutput',0);
     
@@ -107,7 +114,12 @@ dlmwrite(fullfile(outDir,[roiStr 'R' fdStr '_sn_CoM']),CoMR);
 outFName = [roiStr fdStr '_sn'];
 nii=createNewNii(fdsn(1),d,fullfile(outDir,outFName));
 writeFileNifti(nii);
-    
+
+
+% save out a nifti file w/all subjects' fiber density maps summed
+sumNii=createNewNii(nii,sum(d,4),fullfile(outDir,[outFName '_sum']));
+writeFileNifti(sumNii);
+
     
 % do a t-test on fiber density values and save out t-map
 dR=reshape(d,prod(nii.dim(1:3)),[])';
@@ -117,4 +129,4 @@ tNii=createNewNii(nii,tMap,fullfile(outDir,[outFName '_T']));
 writeFileNifti(tNii);
     
 
-
+end % roiStrs

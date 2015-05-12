@@ -51,6 +51,7 @@ if notDefined('plot_biggest')
 end
 if plot_biggest==1
     cols = getDTIColors(1:3);
+    figPrefix = 'win';
 end
 
 

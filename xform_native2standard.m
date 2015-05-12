@@ -124,14 +124,14 @@ switch fType
     case 'fg'           % xform fiber group coords
         
         if ischar(ns_file)
-            ns_file = mtrImportFibers(ns_file);
+            ns_file = fgRead(ns_file);
         end
         
         sn_file = dtiXformFiberCoords(ns_file, invDef); % xform coords
          sn_file.name = [ns_file.name '_sn'];  % define new outName 
       
          if saveOut
-             mtrExportFibers(sn_file,sn_file.name)
+             fgWrite(sn_file,sn_file.name)
          end
         
 end % file type

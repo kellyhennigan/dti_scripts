@@ -19,16 +19,16 @@ close all
 p=getDTIPaths(); cd(p.data);
 
 
-subjects=getDTISubjects;
+subjects=getDTISubjects; subjects = {'sa01'};
 
-LorR = 'L';
+LorR = 'R';
 
 
 seed = 'DA';  % define seed roi
-target = ['nacc' LorR];
+target = ['striatum' LorR];
 
 method = 'conTrack';
-fgName = 'scoredFG__nacc_DA_top2500_L.pdb';
+fgName = 'striatumR_all.pdb';
 
 % method = 'mrtrix';
 % fgName = ['d' target LorR '.tck']; 

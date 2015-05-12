@@ -48,6 +48,7 @@ for j=1:size(msh_idx,2)
     end
 end
 
+
 h=afq_renderMesh(msh)
 axis off
 [h,mov] = rotateMesh(h,[2,2],200);
