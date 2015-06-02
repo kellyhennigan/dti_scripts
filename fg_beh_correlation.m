@@ -9,7 +9,7 @@ scaleStr = 'impulsivity scores';
 
 % fgMDir = '/Users/Kelly/dti/data/fgMeasures/mrtrix';
 fgMDir = '/Users/Kelly/dti/data/fgMeasures/conTrack';
-fgMatName = 'naccL_all.mat';
+fgMatName = 'naccR.mat';
 
 
 fgMeasureToTest = 'MD'; % options are FA, MD, AD, or RD
@@ -50,7 +50,7 @@ thisMeasurePlot = fgMeasures{strcmp(fgMeasureToPlot,fgMLabels)}; % fg measure to
 % calculate correlation btwn scores & fg measure averaged over the whole fg
 [r_wholefg,p_wholefg]=corr(scores,mean(thisMeasure,2));
 
-fprintf(['\n\n score-' fgMeasureToTest ' corr averaged over the whole fg:\n r=%4.2f, p=%6.4f\n'],...
+fprintf(['\n\n TCIscore-' fgMeasureToTest ' corr averaged over the whole fg:\n r=%4.2f, p=%6.4f\n'],...
     r_wholefg, p_wholefg);
 
 % calculate correlation between scores & fg Measure at each node
@@ -59,7 +59,7 @@ fprintf(['\n\n score-' fgMeasureToTest ' corr averaged over the whole fg:\n r=%4
 % find the strongest correlation
 [best_p,best_node] = min(p);
 
-fprintf(['\n\n score-' fgMeasureToTest ' corr at the best node:\n r=%4.2f, p=%6.4f\n'],...
+fprintf(['\n\n TCIscore-' fgMeasureToTest ' corr at the best node:\n r=%4.2f, p=%6.4f\n'],...
     r(best_node), best_p);
 
 
@@ -102,9 +102,10 @@ for i=1:nSubs
     best_ad(i,1)=ad(i,peak_idx(i));
     best_rd(i,1)=rd(i,peak_idx(i));
 end
-corr(scores,best_md)
-corr(scores,best_rd)
-corr(scores,best_ad)
-corr(scores,best_fa)
+fprintf(['\n corr with diffusion measurements taken from where FA peaks:\n\n'])
+fprintf(['MD: ' num2str(corr(scores,best_md)) '\n\n']);
+fprintf(['AD: ' num2str(corr(scores,best_ad)) '\n\n']);
+fprintf(['RD: ' num2str(corr(scores,best_rd)) '\n\n']);
+fprintf(['FA: ' num2str(corr(scores,best_fa)) '\n\n']);
 
 figure(1)

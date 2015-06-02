@@ -5,7 +5,7 @@ close all
 
 nClusters = 3;
 options = statset('Display','final');
-saveClusters = 1;
+saveClusters = 0;
 
 LR = ['L','R'];
 

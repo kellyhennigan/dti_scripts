@@ -33,7 +33,7 @@ xform_coords = 1; % 1 to xform coords into group space, otherwise 0
 %% define a few more variables
 
 
-outDir = fullfile('group_sn','fg_endpts',method);
+outDir = fullfile('cluster_data','fg_endpts',method);
 outName = [roi1Str '_' roi2Str];
 
 if xform_coords
@@ -73,7 +73,7 @@ for s=1:numel(subjects)
     
     
     % put them into all subjects' cell array
-    subj_endpts{s}=endpts';
+    subj_data{s}=endpts';
     
     fprintf(' done.\n\n');
     
@@ -84,7 +84,7 @@ end % subjects
 %% save out subj_endpts cell array
 
 
-save(fullfile(outDir,outName),'subj_endpts');
+save(fullfile(outDir,outName),'subj_data');
 
 
 

@@ -200,10 +200,10 @@ for s=1:numel(subjects)
     acpcSlicesOut = num2cell(acpcSlicesOut);
     
     
-    % plot all fiber groups and save new figure
+    % plot overlay and save new figure
     [h,figNames]= cellfun(@(x,y) plotFDMaps(x,plane,y,saveFigs,figDir,figPrefix,subj), slImgs, acpcSlicesOut, 'UniformOutput',0);
     
-    close all
+%     close all
     
     
 end % subjects

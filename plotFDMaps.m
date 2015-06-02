@@ -116,13 +116,7 @@ end
 
 %% cropped fig
 
-
-if saveFig(2)==1  % them plot and save
-    
-    croppedFigName = [figName '_cropped'];
-    fprintf(['\n\n saving out cropped fig ' figName '...']);
-    
-    
+ 
     midpt=ceil(size(slImg)./2);
     cr = [midpt(1)-29, midpt(1)+30]; % crop rows (take mid horizontal strip, 60px tall)
     cc = [midpt(2)-29, midpt(2)+30]; % crop columns (mid vertical strip, 60px wide)
@@ -155,14 +149,19 @@ if saveFig(2)==1  % them plot and save
     set(gca,'Position',[0,0,1,1]);
     
     
-    
-    %     print(gcf, '-depsc', '-tiff', '-loose', '-r300', '-painters', fullfile(figDir,[figName '.eps']));
-    saveas(h(2),fullfile(figDir,croppedFigName),'pdf');
-    
-    fprintf('done.\n');
-    
-    
-end
+    if saveFig(2)==1  % then plot and save
+        
+        croppedFigName = [figName '_cropped'];
+        fprintf(['\n\n saving out cropped fig ' figName '...']);
+        
+        
+        %     print(gcf, '-depsc', '-tiff', '-loose', '-r300', '-painters', fullfile(figDir,[figName '.eps']));
+        saveas(h(2),fullfile(figDir,croppedFigName),'pdf');
+        
+        fprintf('done.\n');
+        
+        
+    end
 
 
 
