@@ -7,8 +7,8 @@ scaleToTest = 'NS2'; % impulsivity
 scaleStr = 'impulsivity scores';
 
 
-% fgMDir = '/Users/Kelly/dti/data/fgMeasures/mrtrix';
-fgMDir = '/Users/Kelly/dti/data/fgMeasures/conTrack';
+fgMDir = '/Users/Kelly/dti/data/fgMeasures/mrtrix';
+% fgMDir = '/Users/Kelly/dti/data/fgMeasures/conTrack';
 fgMatName = 'naccR.mat';
 
 
@@ -70,6 +70,7 @@ fig_text = sprintf('node %d; r = %3.2f; p = %3.4f (uncorrected),',...
 
 % plot the strongest correlation
 h = plotCorr(scores,zscore(thisMeasure(:,best_node)),scaleStr,fgMeasureToTest,fig_text);
+% h = plotCorr(scores,thisMeasure(:,best_node),scaleStr,fgMeasureToTest,fig_text);
 
 
 %% plot the fgMeasures w/correlation strength in color
@@ -95,17 +96,17 @@ end
 %% 
 
 % % % get md values for each subject at the fiber group peak in FA
-[best_fa,peak_idx] = max(fa(:,6:20),[],2);
+[peak_fa,peak_idx] = max(fa(:,6:20),[],2);
 peak_idx=peak_idx+5;
 for i=1:nSubs
-    best_md(i,1)=md(i,peak_idx(i));
-    best_ad(i,1)=ad(i,peak_idx(i));
-    best_rd(i,1)=rd(i,peak_idx(i));
+    peak_md(i,1)=md(i,peak_idx(i));
+    peak_ad(i,1)=ad(i,peak_idx(i));
+    peak_rd(i,1)=rd(i,peak_idx(i));
 end
-fprintf(['\n corr with diffusion measurements taken from where FA peaks:\n\n'])
-fprintf(['MD: ' num2str(corr(scores,best_md)) '\n\n']);
-fprintf(['AD: ' num2str(corr(scores,best_ad)) '\n\n']);
-fprintf(['RD: ' num2str(corr(scores,best_rd)) '\n\n']);
-fprintf(['FA: ' num2str(corr(scores,best_fa)) '\n\n']);
+fprintf(['\n\n TCIscore-MD corr at FA peak:\n r=%4.2f\n'],corr(scores,peak_md));
+fprintf(['\n\n TCIscore-AD corr at FA peak:\n r=%4.2f\n'],corr(scores,peak_ad));
+fprintf(['\n\n TCIscore-RD corr at FA peak:\n r=%4.2f\n'],corr(scores,peak_rd));
+fprintf(['\n\n TCIscore-FA corr at FA peak:\n r=%4.2f\n'],corr(scores,peak_fa));
+
 
 figure(1)

@@ -53,8 +53,9 @@ plot(x,y,'.','MarkerSize',20,'color','k');
 
 
 % x and y coords for plotting a line
-xl = [min(x)+.25, max(y)-.25];
-yl = [min(x) max(x)].*corr(x,y);
+xl = [min(x)+.25, max(x)-.25];
+b=regress(y,[ones(numel(x),1),x]);
+yl=xl*b(2)+b(1);
 plot(xl,yl,'LineWidth',2.5,'color','k')
 
 xlim([min(x)-.25 max(x)+.25])

@@ -19,19 +19,19 @@ close all
 p=getDTIPaths(); cd(p.data);
 
 
-subjects=getDTISubjects; subjects = {'sa01'};
+subjects=getDTISubjects; 
 
 LorR = 'R';
 
 
 seed = 'DA';  % define seed roi
-target = ['striatum' LorR];
+target = ['nacc' LorR];
 
-method = 'conTrack';
-fgName = 'striatumR_all.pdb';
+% method = 'conTrack';
+% fgName = 'striatumR_all.pdb';
 
-% method = 'mrtrix';
-% fgName = ['d' target LorR '.tck']; 
+ method = 'mrtrix';
+ fgName = ['d' target LorR '.tck']; 
 
 
 % define parameters for pruning fibers
@@ -67,7 +67,7 @@ for i=1:numel(subjects)
     cd(fullfile(subjDir,'fibers',method));
     switch method
         case 'conTrack'
-            fg = mtrImportFibers(fgName);
+            fg = fgRead(fgName);
         case 'mrtrix'
             fg = dtiImportFibersMrtrix(fgName);
     end

@@ -7,17 +7,17 @@ close all
 dataDir = '/Users/Kelly/dti/data';
 
 
-target = 'naccL'; 
+target = 'naccR'; 
 
 % fgMat files relative to dataDir
 % fgMatFiles = {['fgMeasures/conTrack/' target '.mat'],...
 %     ['fgMeasures/conTrack/' target '_manclean.mat'],...
 %     ['fgMeasures/mrtrix/' target '.mat']};
 fgMatFiles = {['fgMeasures/conTrack/' target '.mat'],...
-    ['fgMeasures/conTrack/' target '_manclean.mat']};
+    ['fgMeasures/mrtrix/' target '.mat']};
 
 % strings for plotting
-fgMatStrs = {'autoclean','manclean'}; 
+fgMatStrs = {'contrack','mrtrix'}; 
 
 % plot colors
 % c =   [0.8275    0.2118    0.5098

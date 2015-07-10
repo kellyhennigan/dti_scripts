@@ -68,6 +68,8 @@ for i=1:numel(subjects)
     img = mrAnatHistogramClip(double(t1.data),0.3,0.99);
     
     
+    
+    
     % Compute normalization
     [sn, Vtemplate, invDef] = mrAnatComputeSpmSpatialNorm(img, t1.qto_xyz, templateFile, params);
     % returns:

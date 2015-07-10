@@ -16,8 +16,9 @@ function sn_file = xform_native2standard(sn,invDef,ns_file,fType,saveOut)
 %   sn - struct with xform info in spm format created by spm_normalise()
 %   invDef -inverse deformation field info, also created by spm_normalise()
 %   ns_file - file to be xformed from native to standard space. Can be
-%             either a filename or loaded file. The xform will be carried
-%             out differently depending on the type of file.
+%             a filename, loaded nifti file, or a volume of data. The xform
+%             will be carried out differently depending on the type of
+%             file.
 %   fType - type of file given as ns_file. Can be:
 %             'nii' - nifti file w/same xform and dimensions as t1 in
 %                     native space
@@ -119,7 +120,26 @@ switch fType
         outName = [strrep(strrep(ns_file.fname,'.nii',''),'.gz','') '_sn.nii.gz'];
 
         sn_file = dtiWriteNiftiWrapper(snImg,sn_xform,outName,saveOut);
-       
+
+        
+    case 'vol'         % xform volume(s) of data that is aligned with subject's t1 file in native space
+        
+        vol = ns_file; % if case 'vol', then 'ns_file' variable is the data
+        snImg = mrAnatResliceSpm(vol, sn, bb, mm, [1 1 1 0 0 0], 0);
+        
+        % if there are nan voxels in the spatially normed volume and there
+        % aren't in the native space volume, set them to zero.
+        if isempty(find(isnan(vol))) && ~isempty(find(isnan(snImg)))
+            fprintf('\n\n setting nan voxels in spatially normed volume to 0...\n\n');
+            snImg(isnan(snImg))=0;
+        end
+        
+       % out variable sn_file is the xformed data
+        sn_file = snImg;
+        if saveOut
+            fprintf(['\n\nreturning the xformed volume but this function '...
+                'isn''t equipped to save it out to file...\n'])
+        end
         
     case 'fg'           % xform fiber group coords
         

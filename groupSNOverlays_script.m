@@ -1,18 +1,30 @@
 % this script takes individual subjects' L and R fiber count maps and does
 % the following:
 
-% transforms maps into MNI space, calculates the map's center of mass,
+% transforms maps into MNI space, 
+
+% calculates the map's center of mass,
 % 
 % thresholds each map so that voxels with counts < thresh are set to
-% zero, log-transforms the counts, and normalizes them to be between [0 1],
+% zero, 
+
+% log-transforms the counts and normalizes them to be between [0 1],
 %  (See scale fiber counts for more details),
 
 % combines left and right fiber density maps for a given target roi, 
 
-% and then concatenates the maps across subjects and saves out a
-% nifti w/subjects' density maps in the 4th dim. 
+% and then concatenates the maps across subjects
 
-% also performs a one-sample t-test and saves out the resulting t-map.
+% saves out the following files in the specified outDir: 
+%   text files that contain the center of mass coords (in MNI space) for each
+% left and right roi for each subject, 
+%   a single volume nifti that contains the sum of the transformed fiber
+% density values acros subjects (left and right combined), 
+%   a single volume nifti w/the voxelwise t-score for a one-sample t-test
+% across subjects' xformed fiber density values
+%   a nifti that contains each subject's transformed fiber density values
+% as a separate volume in the 4th dim.
+
 
 %%
 

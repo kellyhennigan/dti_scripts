@@ -12,7 +12,7 @@ clear all
 close all
 
 subs=getDTISubjects;
-% subs = {'sa34'};
+subs = {'sa01'};
 
 qsDir = '/Users/Kelly/dti/data/quench_states'; % directory to house the quench state file
 
@@ -28,25 +28,28 @@ templatefile = ['template_mid_sag.qst']; % example quench state file to use as a
 volPaths = {'../%s/t1/t1_fs.nii.gz'}; % *relative* path to t1 volume
 
 % FGs
-fgPaths = {
-    '../%s/fibers/conTrack/caudate_autoclean_100.pdb',...
-    '../%s/fibers/conTrack/nacc_autoclean_100.pdb',...
-    '../%s/fibers/conTrack/putamen_autoclean_100.pdb'};
+% fgPaths = {
+%     '../%s/fibers/conTrack/caudate_autoclean_100.pdb',...
+%     '../%s/fibers/conTrack/nacc_autoclean_100.pdb',...
+%     '../%s/fibers/conTrack/putamen_autoclean_100.pdb'};
 
 % fgColors = [  0.9333    0.6980    0.1373
 %     0.7961    0.0941    0.1137
 %     0.1294    0.4431    0.7098];
 
-fgColors = [  0.9333    0.6980    0.1373
-    1    0.0941    0.1137
+fgPaths = {'../%s/fibers/conTrack/nacc_autoclean_100.pdb',...
+    '../%s/fibers/mrtrix/nacc_autoclean_100.pdb'};
+
+
+fgColors = [ 1    0.0941    0.1137
     0.1294    0.4431    0.7098];
 
 
 vis_idx = ones(numel(fgPaths),1);
 
 % out file name
-outfilename = ['%s_NCP_mid_sag.qst'];
-
+% outfilename = ['%s_NCP_mid_sag.qst'];
+outfilename = ['%s_nacc100_mrtrix_contrack.qst'];
 
 
 

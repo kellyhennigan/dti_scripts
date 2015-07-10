@@ -20,21 +20,26 @@ mainDir = '/Users/Kelly/dti/data'		# experiment main data directory
 # 	'sa19','sa20','sa21','sa22','sa23','sa24','sa25','sa26','sa27',
 # 	'sa28','sa29','sa30','sa31','sa32','sa33','sa34'] # subjects to process
 
-subjects = ['sa13']
+subjects = ['sa19']
 
 
 # make an fsl directory w/symbolic links to dwi data? 
-doInitFslDir = False
+doInitFslDir = True
 
 # run dtifit to estimate voxel tensors
-doDtiFit = False
+doDtiFit = True
 
 # do bedpostx for probablistic tracking and modeling crossing fibers?
-doBedPostX = False
+doBedPostX = True
+
+# do registration between diffusion, structural, and group structural spaces? 
+# do this even if its already been done with spm because the fsl-formatted 
+# xforms are needed for probtrack
+doRegister = True
 
 # do probtrackx analysis? note: make sure a targetList has been made first 
 # w/ matlab script makeFSLProbtrackTargetFile_script)
-doProbTrackX = True
+doProbTrackX = False
 
 
 
@@ -70,6 +75,9 @@ for subject in subjects:
 		cmd = 'ln -s ../../dti*trilin/bin/brainMask.nii.gz ' \
 			+ 'nodif_brain_mask.nii.gz'
 		os.system(cmd)	
+		cmd = 'ln -s ../../dti*trilin/bin/b0_bet.nii.gz ' \
+			+ 'nodif_brain.nii.gz'
+		os.system(cmd)	
 	else: 
 		os.chdir(fslDir)
 	
@@ -86,23 +94,83 @@ for subject in subjects:
 		cmd = 'bedpostx '+fslDir
 		os.system(cmd)
 		
+	bpDir = fslDir+'.bedpostX'  # define subj's bedpost dir 
+			
+	# diffusion-structural-group registration 
+	if doRegister:
+		diffFile = bpDir+'/nodif_brain.nii.gz'	# b0 file (no skull)
+		t1File = subjDir+'/t1/t1_fs_bet.nii.gz'	# t1 file (no skull)
+		snFile = subjDir+'/t1/t1_sn.nii.gz'		# spatially normed t1 file (no skull)	
+		xfDir = bpDir+'/xfms/'				# xform directory 
+		
+	
+		# diff 2 structural
+		cmd = 'flirt -in '+diffFile+' -ref '+t1File+' ' \
+			+ '-omat '+xfDir+'diff2str.mat ' \
+			+ '-searchrx -90 90 -searchry -90 90 -searchrz -90 90 ' \
+			+ '-dof 6 -cost corratio'
+		print cmd	
+		os.system(cmd)
+		
+		# structural 2 standard
+		cmd = 'flirt -in '+t1File+' -ref '+snFile+' ' \
+			+ '-omat '+xfDir+'str2standard.mat ' \
+			+ '-searchrx -90 90 -searchry -90 90 -searchrz -90 90 ' \
+			+ '-dof 12 -cost corratio'
+		print cmd	
+		os.system(cmd)
+		
+		# structural 2 diff
+		cmd = 'convert_xfm ' \
+			+ '-omat '+xfDir+'str2diff.mat ' \
+			+ '-inverse '+xfDir+'diff2str.mat'
+		print cmd	
+		os.system(cmd)
+	
+		# standard 2 structural 
+		cmd = 'convert_xfm ' \
+			+ '-omat '+xfDir+'standard2str.mat ' \
+			+ '-inverse '+xfDir+'str2standard.mat'
+		print cmd
+		os.system(cmd)
+		
+		# diff 2 standard
+		cmd = 'convert_xfm ' \
+			+ '-omat '+xfDir+'diff2standard.mat ' \
+			+ '-concat '+xfDir+'str2standard.mat '+xfDir+'diff2str.mat'
+		print cmd
+		os.system(cmd)
+	
+		# standard 2 diff
+		cmd = 'convert_xfm ' \
+			+ '-omat '+xfDir+'standard2diff.mat ' \
+			+ '-inverse '+xfDir+'diff2standard.mat'
+		print cmd	
+		os.system(cmd)
+		
 		
 	if doProbTrackX:
-		bpDir = fslDir+'.bedpostX'  # define subj's bedpost dir and cd to it
-		os.chdir(bpDir)
+	
+		#os.chdir(bpDir)
  		for lr in ['L','R']:
+ 			ptDir = os.path.join(subjDir,'fsl_dti/probtrackx/striatum'+lr)
 			cmd = 'probtrackx2 ' \
-				+ '-s merged ' \
-				+ '-m nodif_brain_mask.nii.gz ' \
-				+ '-x ../../ROIs/DA_'+lr+'.nii.gz ' \
+				+ '-s '+bpDir+'/merged ' \
+				+ '-m '+bpDir+'/nodif_brain_mask ' \
+				+ '-x '+subjDir+'/ROIs/dti_space/DA_'+lr+'.nii.gz ' \
 				+ '-o fdt_paths ' \
 				+ '--os2t ' \
-				+ '--targetmasks=../probtrackx/striatum'+lr+'/targetList ' \
-				+ '--dir=../probtrackx/striatum'+lr+' ' \
+				+ '--opd ' \
+				+ '-l ' \
+				+ '--targetmasks='+ptDir+'/targetList ' \
+				+ '--dir='+ptDir+' ' \
 				+ '--forcedir'
 			print(cmd)
+ 			os.system(cmd)
+			
+			os.chdir(ptDir)		 # now do find_the_biggest command
+			cmd = 'find_the_biggest seeds_to* biggest'
 			os.system(cmd)
-		
 		
 	print 'FINISHED SUBJECT '+subject
 			
