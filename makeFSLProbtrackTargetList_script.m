@@ -18,9 +18,12 @@ LR = ['L','R'];
 % right ROI respectively
 targetStrs = {'caudate','nacc','putamen'};
 
+space = 'std'; % desired space for probtrack analysis results - 
+% must be either str (t1 native space), std, or diff
+
 % directory string for out file relative to subj dir. 'L' or 'R' will be
 % added accordingly.
-outDirStr = 'fsl_dti/probtrackx/striatum';
+outDirStr = ['fsl_dti/probtrackx/' space '/striatum_naccdil'];
 
 %%
 
@@ -51,8 +54,13 @@ for s = 1:numel(subjects)
             fid = fopen(outFile,'w');
             for j=1:numel(targetStrs)
                 
+                if j==2
+                    roiFilePath = fullfile(subjDir,'fsl_dti','ROIs',space,[targetStrs{j} LR(lr) '_dilated.nii.gz']);
+                else
                 % if target nifti files don't exist/aren't recognized, throw an error
-                roiFilePath = fullfile(subjDir,'ROIs','dti_space',[targetStrs{j} LR(lr) '.nii.gz']);
+                roiFilePath = fullfile(subjDir,'fsl_dti','ROIs',space,[targetStrs{j} LR(lr) '.nii.gz']);
+                end
+                
                 if ~exist(roiFilePath,'file')
                     error(['can''t find target file ' roiFilePath]);
                 end

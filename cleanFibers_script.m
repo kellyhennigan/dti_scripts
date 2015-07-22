@@ -25,27 +25,24 @@ LorR = 'R';
 
 
 seed = 'DA';  % define seed roi
-target = ['nacc' LorR];
+target = ['nacc' LorR ];
 
-% method = 'conTrack';
-% fgName = 'striatumR_all.pdb';
-
- method = 'mrtrix';
- fgName = ['d' target LorR '.tck']; 
+method = 'conTrack';
+fgName = 'scoredFG__nacc_DA_top2500_R.pdb'
+%  method = 'mrtrix';
+%  fgName = [target '.tck']; 
 
 
 % define parameters for pruning fibers
 maxIter = 2;  % 5 iterations for conTrack (nacc), 2 for mrtrix and all other conTrack
-maxDist=4;
-maxLen=4;
-numNodes=16;
+maxDist=3;
+maxLen=2;
+numNodes=100;
 M='median';
 count = 1;
 show = 0; % 1 to plot each iteration, 0 otherwise
 
-% outFgName = [strrep(fgName,'.tck','') '_autoclean']; % name for out fg file
-% outFgName = [strrep(fgName,'.pdb','') '_autoclean']; % name for out fg file
-outFgName = [target '_all_autoclean'];
+outFgName = [target '_autoclean_test'];
 
 
 %% DO IT
@@ -60,33 +57,27 @@ for i=1:numel(subjects)
     subjDir = fullfile(p.data,subject); cd(subjDir);
     
     % load seed and target rois
-    load(fullfile('ROIs',[seed '.mat'])); roi1 = roi;
-    load(fullfile('ROIs',[target '.mat'])); roi2=roi; clear roi
-    
+    roi1 = roiNiftiToMat(['ROIs/' seed '.nii.gz']);
+    roi2 = roiNiftiToMat(['ROIs/' target '.nii.gz']);
+ 
     % load fiber groups
     cd(fullfile(subjDir,'fibers',method));
-    switch method
-        case 'conTrack'
-            fg = fgRead(fgName);
-        case 'mrtrix'
-            fg = dtiImportFibersMrtrix(fgName);
-    end
-    
-    
+    fg = fgRead(fgName);
+
     % reorient fibers so they all start in DA ROI
     [fg,flipped] = AFQ_ReorientFibers(fg,roi1,roi2);
     
     
 %     % if target roi is the nacc, then do some extra pruning
-    if strcmp(target(1:4),'nacc')
-        fg = pruneDaNaccFgs(fg,roi1,roi2,subject,method,LorR,0,0);
-    end
-    
-    % if target roi is striatum, then do some extra pruning
-    if strcmp(target(1:4),'stri')
-        fg = pruneDaStrFgs(fg,roi1,roi2,method,0);
-    end
-    
+%     if strcmp(target(1:4),'nacc')
+%         fg = pruneDaNaccFgs(fg,roi1,roi2,subject,method,LorR,0,0);
+%     end
+%     
+%     % if target roi is striatum, then do some extra pruning
+%     if strcmp(target(1:4),'stri')
+%         fg = pruneDaStrFgs(fg,roi1,roi2,method,0);
+%     end
+%     
     % remove outliers and save out cleaned fiber group
     if ~isempty(fg.fibers)
         
@@ -95,7 +86,6 @@ for i=1:numel(subjects)
         
         fprintf('\n\n final # of %s cleaned fibers: %d\n\n',fg.name, numel(find(keep)));
        
-%         cleanfg = getSubFG(fg,find(keep),[fg.name '_autoclean']);
         cleanfg = getSubFG(fg,find(keep),outFgName);
         
         nFibers_clean(i,1) = numel(cleanfg.fibers); % keep track of the final # of fibers
@@ -103,7 +93,7 @@ for i=1:numel(subjects)
         AFQ_RenderFibers(cleanfg,'tubes',0,'numfibers',500,'color',[1 0 0]);
         title(gca,subject);
        
-        mtrExportFibers(cleanfg,cleanfg.name);  % save out cleaned fibers
+        fgWrite(cleanfg);  % save out cleaned fibers
      
         
     else

@@ -10,13 +10,16 @@ dataDir = '/Users/Kelly/dti/data';
 subjects=getDTISubjects;
 
 % filepaths relative to each subject's directory
-t1file = 't1_fs.nii.gz';
 dt6file = 'dti96trilin/dt6.mat';
 
 
-nNodes = 20; % number of nodes for fiber tract
+nNodes = 12; % number of nodes for fiber tract
 
 fgMLabels = {'FA','MD','RD','AD'};
+
+% define fiber group to load
+ method = 'conTrack';
+% method = 'mrtrix';
 
 
 % roi strings; rois will be in subjDir/ROIs directory
@@ -25,22 +28,16 @@ seed = 'DA'; % seed roi string
 % targets = {'caudateL','caudateR',...
 %     'naccL','naccR',...
 %     'putamenL','putamenR'}; % target roi strings
-targets = {'naccL'}; % target roi strings
+targets = {'naccR'}; % target roi strings
 
 
-
-% define fiber group to load
-method = 'conTrack';
-% method = 'mrtrix';
+% string to identify fiber group files?
+fgNameStr = '_autoclean'; % [targets{j} fgNameStr '.pdb'] should be fgName
 
 
-% string to identify fiber group files? 
-fgNameStr = '_all_autoclean'; % [targets{j} fgNameStr '.pdb'] should be fgName
-
-
-% string to include on outfile? 
-% outNameStr = fgNameStr;
-outNameStr = '_all';
+% string to include on outfile?
+outNameStr = '_nNodes12';
+%     outName = [target outNameStr]; % name of saved out .mat file
 
 
 %% do it
@@ -48,7 +45,8 @@ outNameStr = '_all';
 
 for j=1:numel(targets)
     
-    target = targets{j};
+    target = targets{j};    % this target roi
+    fgName = [target fgNameStr '.pdb']; % this fg
     
     fprintf(['\n\nworking on ' target ' fiber group...\n\n']);
     
@@ -62,41 +60,37 @@ for j=1:numel(targets)
         cd(subjDir);
         
         
-        % load t1 and dt6 files
-        t1 = readFileNifti(t1file);
+        % load dt6 file
         dt = dtiLoadDt6(dt6file);
         %     [fa,md] = dtiComputeFA(dt.dt6);
         
         
         % load ROIs
-        load(fullfile('ROIs',[seed '.mat'])); roi1 = roi;
-        load(fullfile('ROIs',[target '.mat'])); roi2=roi; clear roi
+        roi1 = roiNiftiToMat(['ROIs/' seed '.nii.gz']);
+        roi2 = roiNiftiToMat(['ROIs/' target '.nii.gz']);
         
         
         % load fibers
-        fg = mtrImportFibers(fullfile('fibers',method,[target fgNameStr '.pdb']));
+        fg = mtrImportFibers(fullfile('fibers',method,fgName));
         
         
         % reorient to start in DA ROI and clip to DA and target ROIs
         %     (this may be already done but do it again just in case)
         fg = AFQ_ReorientFibers(fg,roi1,roi2);
-        fg = dtiClipFiberGroupToROIs(fg,roi1,roi2);
         
         
         %  get fa and md measures for correlation test
-        [fa, md, rd, ad, cl, fgvol{i}, TractProfiles(i)] = AFQ_ComputeTractProperties(fg, dt,nNodes, 0);
-        
-        
-        %     old method:
-        %  get fa and md measures for correlation test
-        %     [fa, md, rd, ad, cl, SuperFibers{i},fgClipped,~,~,fgResampled]=...
-        %         dtiComputeDiffusionPropertiesAlongFG(fg,dt,roi1,roi2,nNodes,[]);
-        
+            [fa, md, rd, ad, cl, SuperFibers(i),fgClipped,~,~,fgResampled,subjEigVals]=...
+                dtiComputeDiffusionPropertiesAlongFG_with_eigs(fg,dt,roi1,roi2,nNodes,[]);
+      
+%         [fa, md, rd, ad, cl, fgvol{i}, TractProfiles(i)] = AFQ_ComputeTractProperties(fg, dt,nNodes, 0);
+  
         
         fgMeasures{1}(i,:) = fa;
         fgMeasures{2}(i,:) = md;
         fgMeasures{3}(i,:) = rd;
         fgMeasures{4}(i,:) = ad;
+        eigVals(i,:,:) = permute(subjEigVals,[3 1 2]);
         
         clear fa md rd ad cl dt t1 roi1 roi2
         
@@ -111,11 +105,8 @@ for j=1:numel(targets)
     
     cd(fullfile(dataDir,'fgMeasures',method));
     
-    % save(outName,'subjects','seed',...
-    %     'target','fgName','nNodes','fgMeasures','fgMLabels','SuperFibers');
-    
-    save(outName,'subjects','seed',...
-        'target','fgNameStr','nNodes','fgMeasures','fgMLabels','fgvol','TractProfiles');
+    save(outName,'subjects','seed','target',...
+        'fgName','nNodes','fgMeasures','fgMLabels','SuperFibers','eigVals');
     
     fprintf(['\nsaved out file ' outName '\n\n']);
     

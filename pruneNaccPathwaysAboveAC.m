@@ -151,6 +151,7 @@ end
 
 %% get the pathways below the AC
 
+
 % temporarily clip all pathways in the coronal plane at the AC
 fg_clipped=dtiClipFiberGroup(fg,[],[y_eval 80],[]);
 

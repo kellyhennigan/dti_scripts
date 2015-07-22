@@ -11,12 +11,13 @@ import os,sys
 mainDir = '/Users/Kelly/dti/data'		# experiment main data directory
 
 
+# subjects = ['sa01','sa07','sa10','sa11','sa13','sa14','sa16','sa18',
+#  	'sa19','sa20','sa21','sa22','sa23','sa24','sa25','sa26','sa27',
+#  	'sa28','sa29','sa30','sa31','sa32','sa33','sa34'] # subjects to process
+
 subjects = ['sa01','sa07','sa10','sa11','sa13','sa14','sa16','sa18',
  	'sa19','sa20','sa21','sa22','sa23','sa24','sa25','sa26','sa27',
  	'sa28','sa29','sa30','sa31','sa32','sa33','sa34'] # subjects to process
-# subjects = ['sa07','sa10','sa11','sa13','sa14','sa16','sa18',
-#  	'sa19','sa20','sa21','sa22','sa23','sa24','sa25','sa26','sa27',
-#  	'sa28','sa29','sa30','sa31','sa32','sa33','sa34'] # subjects to process
 
 
 ##########################################################################################
@@ -37,8 +38,8 @@ maskfile = 'brainMask.nii.gz' 		# this should be included
 # define ROIs 
 # seedStr = 'DA'						# if false, will use the mask as seed ROI by default
 # roi2Strs = ['nacc','caudate','putamen']		# can be many or none; if not defined, fibers will just be tracked from the seed ROI
-seedStr = 'DA_L'						# if false, will use the mask as seed ROI by default
-roi2Strs = ['naccL']		# can be many or none; if not defined, fibers will just be tracked from the seed ROI
+seedStr = 'DA_R'						# if false, will use the mask as seed ROI by default
+roi2Strs = ['naccR_dilated']		# can be many or none; if not defined, fibers will just be tracked from the seed ROI
 excPath = ''
 #excPath = '/Users/Kelly/dti/data/AC_coronal_wall.nii.gz'
 

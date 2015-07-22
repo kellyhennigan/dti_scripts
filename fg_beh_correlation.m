@@ -3,14 +3,21 @@
 clear all
 close all
 
+% define variables, directories, etc.
+
+% get experiment-specific paths and cd to main data directory
+p=getDTIPaths(); cd(p.data);
+
+
 scaleToTest = 'NS2'; % impulsivity
 scaleStr = 'impulsivity scores';
 
 
-fgMDir = '/Users/Kelly/dti/data/fgMeasures/mrtrix';
-% fgMDir = '/Users/Kelly/dti/data/fgMeasures/conTrack';
-fgMatName = 'naccR.mat';
+% fgMDir = [p.data '/fgMeasures/mrtrix'];
+fgMDir = [p.data '/fgMeasures/conTrack'];
 
+ fgMatName = 'naccR_nNodes12.mat';
+% fgMatName = 'naccR.mat';
 
 fgMeasureToTest = 'MD'; % options are FA, MD, AD, or RD
 fgMeasureToPlot = 'FA';
@@ -35,7 +42,7 @@ scores = getTciScores(scaleToTest,subjects);
 % omit any subjects?
 oIdx = unique([find(ismember(subjects,omit_subs)), find(isnan(scores))]);
 fgMeasures=cellfun(@(x) x(find(~ismember(1:numel(subjects),oIdx)),:), fgMeasures, 'UniformOutput',0);
-scores(oIdx) = []; subjects(oIdx) = [];
+scores(oIdx) = []; eigVals(oIdx,:,:) = []; subjects(oIdx) = [];
 nSubs = numel(subjects);
 
 fa = fgMeasures{1}; md = fgMeasures{2}; rd = fgMeasures{3}; ad = fgMeasures{4};
@@ -96,17 +103,17 @@ end
 %% 
 
 % % % get md values for each subject at the fiber group peak in FA
-[peak_fa,peak_idx] = max(fa(:,6:20),[],2);
-peak_idx=peak_idx+5;
-for i=1:nSubs
-    peak_md(i,1)=md(i,peak_idx(i));
-    peak_ad(i,1)=ad(i,peak_idx(i));
-    peak_rd(i,1)=rd(i,peak_idx(i));
-end
-fprintf(['\n\n TCIscore-MD corr at FA peak:\n r=%4.2f\n'],corr(scores,peak_md));
-fprintf(['\n\n TCIscore-AD corr at FA peak:\n r=%4.2f\n'],corr(scores,peak_ad));
-fprintf(['\n\n TCIscore-RD corr at FA peak:\n r=%4.2f\n'],corr(scores,peak_rd));
-fprintf(['\n\n TCIscore-FA corr at FA peak:\n r=%4.2f\n'],corr(scores,peak_fa));
-
+% [peak_fa,peak_idx] = max(fa(:,6:20),[],2);
+% peak_idx=peak_idx+5;
+% for i=1:nSubs
+%     peak_md(i,1)=md(i,peak_idx(i));
+%     peak_ad(i,1)=ad(i,peak_idx(i));
+%     peak_rd(i,1)=rd(i,peak_idx(i));
+% end
+% fprintf(['\n\n TCIscore-MD corr at FA peak:\n r=%4.2f\n'],corr(scores,peak_md));
+% fprintf(['\n\n TCIscore-AD corr at FA peak:\n r=%4.2f\n'],corr(scores,peak_ad));
+% fprintf(['\n\n TCIscore-RD corr at FA peak:\n r=%4.2f\n'],corr(scores,peak_rd));
+% fprintf(['\n\n TCIscore-FA corr at FA peak:\n r=%4.2f\n'],corr(scores,peak_fa));
+% 
 
 figure(1)

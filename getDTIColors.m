@@ -36,7 +36,7 @@ nacc = [250 24 29]./255;        % red
 putamen = [33, 113, 181]./255;  % blue
 dTier = [244 101 7]./255;       % orange
 vTier = [44, 129, 162]./255;    % blue (different from putamen blue)
-daRoi = [35 132 67]./255;       % green
+daRoi = [28 178 5]./255;       % green
 
 colors = [caud; nacc; putamen; dTier; vTier; daRoi]; % needs to match the number of elements in area vector
 
