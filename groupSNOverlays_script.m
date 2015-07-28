@@ -39,14 +39,14 @@ p = getDTIPaths; cd(p.data);
 
 % define subjects to process
 subjects=getDTISubjects;
-
+subjects([2,4,5,6])=[];
 
 % specify directory & files to xform, relative to subject's dir
-method = 'mrtrix';
+method = 'conTrack';
 
 
 % strings specifying left and right fiber density files
-roiStrs = {'caudate';'nacc';'putamen'}; 
+roiStrs = {'null_caudate';'null_nacc';'null_putamen'}; 
 LR = {'L','R'}; 
 fdStr = '_da_endpts_S3';
 
@@ -78,33 +78,43 @@ for s=1:numel(subjects)
 
     
     % define left and right fiber density filepaths
-    fdFilePaths = cellfun(@(x) fullfile(subj,'fg_densities',method,[roiStr x fdStr '.nii.gz']), LR, 'UniformOutput',0);
-    fdFiles = cellfun(@readFileNifti, fdFilePaths, 'UniformOutput',0);
+     fdFilePaths = cellfun(@(x) fullfile(subj,'fg_densities',method,[roiStr x fdStr '.nii.gz']), LR, 'UniformOutput',0);
+%     fdFiles = cellfun(@readFileNifti, fdFilePaths, 'UniformOutput',0);
 
+%      fdFiles{1} = readFileNifti(fullfile(subj,'fg_densities',method,[roiStr fdStr '.nii.gz']));
+
+
+    % smooth w/3 gaussian before normalizing
+%     for a=1:numel(fdFiles)
+%         fdFiles{a}.data = smooth3(fdFiles{a}.data, 'gaussian', 3);
+%     end
+ 
       
     % transform fd maps to mni space
-    fdsn = cellfun(@(x) xform_native2standard(sn,invDef,x,'nii',0), fdFilePaths);
-%     fds_sn = cellfun(@(x) xform_native2standard(sn,invDef,x,'nii',0), fdFiles);
+      fdsn = cellfun(@(x) xform_native2standard(sn,invDef,x,'nii',0), fdFilePaths);
+%     fdsn = cellfun(@(x) xform_native2standard(sn,invDef,x,'nii',0), fdFiles);
     
 
     % put the left and right fiber density maps into a 1x2 cell array
-    fdImgLR={fdsn(:).data};
+   fdImgLR={fdsn(:).data};
+
+        
     
     
     % calculate CoM for L and R fiber density maps. It's probably best to
     % consistently use CoM coords from subjects' native space. But
     % calculate them here anyway and save, just in case. 
-    imgCoM = cellfun(@centerofmass,fdImgLR,'UniformOutput',0); % CoM in img coords
-    CoM(s,1:2) = cellfun(@(x) mrAnatXformCoords(fdsn(1).qto_xyz,x), imgCoM, 'UniformOutput',0);
+     imgCoM = cellfun(@centerofmass,fdImgLR,'UniformOutput',0); % CoM in img coords
+     CoM(s,1:2) = cellfun(@(x) mrAnatXformCoords(fdsn(1).qto_xyz,x), imgCoM, 'UniformOutput',0);
     
     
-    % threshold, log-transform, and scale L and R maps separately, so max() of each map=1
-    fdImgLR = cellfun(@(x) scaleFiberCounts(x), fdImgLR, 'UniformOutput',0);
+    % threshold, and scale to sum to 100
+    fdImgLR = cellfun(@(x) scaleFiberCounts2(x), fdImgLR, 'UniformOutput',0);
     
     
     % now combine L and R maps and put into a matrix w/subs in the 4th dim
     d(:,:,:,s)=fdImgLR{1}+ fdImgLR{2};
-    
+%     d(:,:,:,s)=fdImgLR{1};
     
     fprintf(' done.\n\n');
 
@@ -114,6 +124,11 @@ end % subjects
 
 %% save out files
 
+% for s=1:22
+%     imgCoM = centerofmass(d(:,:,:,s));
+%     CoM(s,:) = mrAnatXformCoords(fdsn.qto_xyz,imgCoM);
+% end
+% dlmwrite(fullfile(outDir,[roiStr fdStr '_sn_CoM']),CoM);
 
 % CoM coords in MNI space 
 CoML = cell2mat(CoM(:,1)); 
@@ -123,22 +138,22 @@ dlmwrite(fullfile(outDir,[roiStr 'R' fdStr '_sn_CoM']),CoMR);
 
 
 % save out a nifti file w/all subjects' fiber density maps 
-outFName = [roiStr fdStr '_sn'];
+outFName = [roiStr fdStr '_sn_percent'];
 nii=createNewNii(fdsn(1),d,fullfile(outDir,outFName));
 writeFileNifti(nii);
 
 
-% save out a nifti file w/all subjects' fiber density maps summed
-sumNii=createNewNii(nii,sum(d,4),fullfile(outDir,[outFName '_sum']));
-writeFileNifti(sumNii);
+% save out a nifti file w/the mean of all subjects' fiber density maps 
+meanNii=createNewNii(nii,mean(d,4),fullfile(outDir,[outFName '_mean']));
+writeFileNifti(meanNii);
 
-    
-% do a t-test on fiber density values and save out t-map
+%     
+% % do a t-test on fiber density values and save out t-map
 dR=reshape(d,prod(nii.dim(1:3)),[])';
 [~,p,~,stats]=ttest(dR);
 tMap = reshape(stats.tstat,[nii.dim(1:3)]); tMap(isnan(tMap)) = 0;
 tNii=createNewNii(nii,tMap,fullfile(outDir,[outFName '_T']));
 writeFileNifti(tNii);
-    
+%     
 
 end % roiStrs

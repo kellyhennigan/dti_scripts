@@ -9,14 +9,14 @@ close all
 p=getDTIPaths(); cd(p.data);
 
 
-scaleToTest = 'NS2'; % impulsivity
+scaleToTest = 'NS4'; % impulsivity
 scaleStr = 'impulsivity scores';
 
 
 % fgMDir = [p.data '/fgMeasures/mrtrix'];
 fgMDir = [p.data '/fgMeasures/conTrack'];
 
- fgMatName = 'naccR_nNodes12.mat';
+ fgMatName = 'naccR.mat';
 % fgMatName = 'naccR.mat';
 
 fgMeasureToTest = 'MD'; % options are FA, MD, AD, or RD

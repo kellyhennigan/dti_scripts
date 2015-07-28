@@ -10,6 +10,7 @@ subjects = getDTISubjects; subject = 'group_sn';
 
 method = 'conTrack';
 
+space = 'sn';
 
 targets = {'caudateL','caudateR';
     'naccL','naccR';
@@ -31,7 +32,7 @@ end
 %% get fiber groups center of mass and load files 
 
 
-CoM = getFDCoMCoords(targets, method);
+CoM = getFDCoMCoords(targets, method,'da_endpts_S3',space);
 
 % get image coordinates 
 imgCoM = cellfun(@(x) mrAnatXformCoords(t1.qto_ijk,x), CoM,'UniformOutput',0);
@@ -98,7 +99,7 @@ axis(ax0)
 %% plot an image slice 
 
 
-AFQ_AddImageTo3dPlot(t1,[0 -18 0])
+AFQ_AddImageTo3dPlot(t1,[0 0 -12])
 % axis off
 
 

@@ -1,4 +1,4 @@
-function [fgOut,endpts]=getFGEnds(fg,nEnds)
+function [fgOut,endpts]=getFGEnds(fg,whichEnd,nEndNodes)
 % -------------------------------------------------------------------------
 % usage: this function takes in a fiber group and returns two separate
 % fiber group structs that contain the first and last endpoints of each
@@ -6,8 +6,12 @@ function [fgOut,endpts]=getFGEnds(fg,nEnds)
 % 
 % INPUT:
 %   fg - fiber group structure 
-%   nEnds - just first or both endpoints (so 1 or 2)
-% 
+%   whichEnd - first, last, or both fiber endpoints? Must be either 1, 2,
+%              or [1,2]
+%   nEndNodes - # of endpoint coords to give at each end. Default is 1.
+%   
+
+
 % OUTPUT:
 %   fgOut - exact same as fg, except each fiber cell contains only the 
 %           endpoint coordinates of each fiber. 
@@ -20,25 +24,35 @@ function [fgOut,endpts]=getFGEnds(fg,nEnds)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% if nEnds isn't given, just give the first endpoint coord
-if notDefined('nEnds')
-    nEnds = 1; 
+% if whichEnd isn't given, just give the first endpoint coord
+if notDefined('whichEnd')
+    whichEnd = 1; 
 end
 
-
-% get fibers' first endpoints:
-if nEnds==1
+% if nEnds isn't given, just give the first endpoint coord
+if notDefined('nEndNodes') 
+    nEndNodes = 1; 
+end
+   
+    
  fgOut=fg;  
- fgOut.fibers = cellfun(@(x) x(:,1), fgOut.fibers,'UniformOutput',0);
+ 
+% get fibers' first endpoints:
+if whichEnd==1
+ fgOut.fibers = cellfun(@(x) x(:,1:nEndNodes), fgOut.fibers,'UniformOutput',0);
  endpts = [fgOut.fibers{:}];
- 
- 
-% get fibers' first and last endpoints:
-elseif nEnds==2
-    fgOut=fg;  
-    fgOut.fibers = cellfun(@(x) x(:,[1,end]), fgOut.fibers,'UniformOutput',0);
-    endpts = cell2mat(cellfun(@(x) reshape(x,6,1), fgOut.fibers, 'UniformOutput',0)');
 
+ % get fibers' last endpoints:
+elseif whichEnd==2
+ fgOut.fibers = cellfun(@(x) x(:,end-nEndNodes+1:end), fgOut.fibers,'UniformOutput',0);
+ endpts = [fgOut.fibers{:}];
+
+% give fibers' first and last endpoints  
+else 
+    fgOut.fibers = cellfun(@(x) x(:,[1:nEndNodes,end-nEndNodes+1:end]), fgOut.fibers,'UniformOutput',0);
+    endpts = cell2mat(cellfun(@(x) reshape(x,[],1), fgOut.fibers, 'UniformOutput',0)');
+
+    
 end
 
 

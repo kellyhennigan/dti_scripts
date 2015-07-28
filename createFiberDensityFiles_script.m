@@ -13,31 +13,36 @@ close all
 
 dataDir = '/Users/Kelly/dti/data';
 
-subjects = getDTISubjects(); subjects = {'sa24'};
+subjects = getDTISubjects(); 
+subjects([2,4,5])=[];
 
 
 % method = 'mrtrix';
 method = 'conTrack';
-targets = {'naccL'};
+% targets = {'naccL'};
 % targets = {'naccL','naccR','caudateL','caudateR','putamenL','putamenR'};
 
 
 % string to identify fiber group files? 
-fgFileStr = '_autoclean'; % files are named [target fgFileStr '.pdb']
+% fgFileStr = '_autoclean'; % files are named [target fgFileStr '.pdb']
 
 
 % string to include on outfile? 
-% outNameStr = fgNameStr;
 outNameStr = '';
 
-
+t1File = 't1/t1_fs.nii.gz';
 
 % options
 only_da_endpts = 1; % create density maps only using da endpoints?
 smooth = 3; % 0 or empty to not smooth, otherwise this defines the smoothing kernel
 
+targets = {'null_caudate','null_nacc','null_putamen'};
 
+fgFiles = {'scoredFG__null_caudate_DA_top2500.pdb',...
+    'scoredFG__null_nacc_DA_top2500.pdb',...
+    'scoredFG__null_putamen_DA_top2500.pdb'};
 
+LR = ['L','R']
 %% get to it
 
 cd(dataDir);
@@ -62,21 +67,31 @@ for i=1:numel(subjects)
     
     % load dt6.mat and t1 images
     dt = dtiLoadDt6(fullfile('dti96trilin','dt6.mat'));
-    t1 = readFileNifti('t1_fs.nii.gz');
+    t1 = readFileNifti(t1File);
     
+       roi1 = roiNiftiToMat('ROIs/DA.nii.gz');
     
     for j=1:numel(targets)
         
         
         % load fiber group
-        fg = fgRead(fullfile('fibers',method,[targets{j} fgFileStr '.pdb']));
-            
+%         fg = fgRead(fullfile('fibers',method,[targets{j} fgFileStr '.pdb']));
+        fg = fgRead(fullfile('fibers',method,fgFiles{j}));
         
+        load(['ROIs/' targets{j} '.mat']); roi2=roi;
+       [fg,flipped] = AFQ_ReorientFibers(fg,roi1,roi2);
+ 
+        
+        [fg1{1},fg1{2}]=splitFgLR(fg);
         % define out name for fiber density file
 %         outName = fg.name;
-        outName = targets{j};
+    
 
-        
+for lr=1:2
+    
+    fg=fg1{lr};
+        outName = [targets{j} LR(lr)];
+
         % to use just da endpoints of fibers:
         if only_da_endpts
             fg.fibers = cellfun(@(x) x(:,1), fg.fibers,'UniformOutput',0);
@@ -98,9 +113,15 @@ for i=1:numel(subjects)
         
         
         % save new fiber density file
+        outName = [outName outNameStr];
         nii=createNewNii(t1,fd,fullfile(fdDir,outName),'fiber counts per vox');
         writeFileNifti(nii);
         
+        imgCoM = centerofmass(nii.data);
+        CoM = mrAnatXformCoords(nii.qto_xyz,imgCoM);
+       dlmwrite(fullfile(fdDir,[outName '_CoM']),CoM)
+       
+end % lr
         
     end % targets
     

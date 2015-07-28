@@ -13,12 +13,12 @@ subjects=getDTISubjects;
 dt6file = 'dti96trilin/dt6.mat';
 
 
-nNodes = 12; % number of nodes for fiber tract
+nNodes = 20; % number of nodes for fiber tract
 
 fgMLabels = {'FA','MD','RD','AD'};
 
 % define fiber group to load
- method = 'conTrack';
+method = 'conTrack';
 % method = 'mrtrix';
 
 
@@ -32,11 +32,11 @@ targets = {'naccR'}; % target roi strings
 
 
 % string to identify fiber group files?
-fgNameStr = '_autoclean'; % [targets{j} fgNameStr '.pdb'] should be fgName
+fgNameStr = '_autoclean_afq_params'; % [targets{j} fgNameStr '.pdb'] should be fgName
 
 
 % string to include on outfile?
-outNameStr = '_nNodes12';
+outNameStr = ['_n' num2str(nNodes) '_afq_params'];
 %     outName = [target outNameStr]; % name of saved out .mat file
 
 
@@ -78,13 +78,21 @@ for j=1:numel(targets)
         %     (this may be already done but do it again just in case)
         fg = AFQ_ReorientFibers(fg,roi1,roi2);
         
+        % clip ROIs here instead of in the next function because for some
+        % subjects, min dist for clipping needs to be increased so wonky
+        %         stuff doesn't happen
+        if strcmp(subjects{i},'sa10') && strcmp(target,'caudateL')
+            fgClipped = dtiClipFiberGroupToROIs(fg,roi1,roi2,3);
+        else
+            fgClipped = dtiClipFiberGroupToROIs(fg,roi1,roi2);
+        end
         
         %  get fa and md measures for correlation test
-            [fa, md, rd, ad, cl, SuperFibers(i),fgClipped,~,~,fgResampled,subjEigVals]=...
-                dtiComputeDiffusionPropertiesAlongFG_with_eigs(fg,dt,roi1,roi2,nNodes,[]);
-      
-%         [fa, md, rd, ad, cl, fgvol{i}, TractProfiles(i)] = AFQ_ComputeTractProperties(fg, dt,nNodes, 0);
-  
+        [fa, md, rd, ad, cl, SuperFibers(i),fgClipped,~,~,fgResampled,subjEigVals]=...
+            dtiComputeDiffusionPropertiesAlongFG_with_eigs(fg,dt,[],[],nNodes,[]);
+        
+        %         [fa, md, rd, ad, cl, fgvol{i}, TractProfiles(i)] = AFQ_ComputeTractProperties(fg, dt,nNodes, 0);
+        
         
         fgMeasures{1}(i,:) = fa;
         fgMeasures{2}(i,:) = md;
@@ -110,5 +118,6 @@ for j=1:numel(targets)
     
     fprintf(['\nsaved out file ' outName '\n\n']);
     
+    clear target fgName fgMeasures SuperFibers eigVals
     
 end % targets loop

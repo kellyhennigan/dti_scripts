@@ -34,15 +34,15 @@ fgName = 'scoredFG__nacc_DA_top2500_R.pdb'
 
 
 % define parameters for pruning fibers
-maxIter = 2;  % 5 iterations for conTrack (nacc), 2 for mrtrix and all other conTrack
-maxDist=3;
-maxLen=2;
+maxIter = 10;  % 5 iterations for conTrack (nacc), 2 for mrtrix and all other conTrack
+maxDist=4;
+maxLen=3;
 numNodes=100;
-M='median';
+M='mean';
 count = 1;
 show = 0; % 1 to plot each iteration, 0 otherwise
 
-outFgName = [target '_autoclean_test'];
+outFgName = [target '_autoclean_afq_params'];
 
 
 %% DO IT
@@ -70,9 +70,14 @@ for i=1:numel(subjects)
     
 %     % if target roi is the nacc, then do some extra pruning
 %     if strcmp(target(1:4),'nacc')
-%         fg = pruneDaNaccFgs(fg,roi1,roi2,subject,method,LorR,0,0);
+%         fg = pruneDaNaccFgs_SA(fg,roi1,roi2,subject,method,LorR,0,0);
 %     end
-%     
+    
+    if strcmp(target(1:4),'nacc')
+        pruneAboveAC=0; doPlot=0;
+         fg = pruneDaNaccFgs(fg,subject,LorR,roi1,roi2,pruneAboveAC,doPlot);
+    end
+%    
 %     % if target roi is striatum, then do some extra pruning
 %     if strcmp(target(1:4),'stri')
 %         fg = pruneDaStrFgs(fg,roi1,roi2,method,0);

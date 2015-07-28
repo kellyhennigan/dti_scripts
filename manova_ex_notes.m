@@ -78,10 +78,10 @@ legend('group 1','group 2','Location','NW')
 % linear combination of the mean-centered original variables, using
 % coefficients from the eigenvec matrix.
 % 
-c1 = stats.canon(:,1);
-c2 = stats.canon(:,2);
+c1 = st.canon(:,1);
+c2 = st.canon(:,2);
 figure()
-gscatter(c2,c1,,gi,'oxs')
+gscatter(c2,c1,gi)
 
 
 
@@ -97,14 +97,15 @@ y0= randn(50,2); % 2 columns of random data
 n = size(y0,1);  % sample size
 
 
-repmat(my,1,n)
-ssy=sum((y-repmat(my,n,1)).^2)
 
 y=y0(:,1)-y0(:,2);
 my=sum(y)./n;
 
 vary=sum((y-repmat(my,n,1)).^2)./(n-1);
 sdy=sqrt(vary);
+
+repmat(my,1,n)
+ssy=sum((y-repmat(my,n,1)).^2)
 
 
 %% get t-stat
@@ -282,7 +283,7 @@ stats.eigvec
 % The eigenval field is a vector measuring the ratio of the between-group
 % variance to the within-group variance for the corresponding linear
 % combination. 
-stats.eigval
+stats.eigenval
 
 % The canon field is a matrix of the canonical variable values. Each column
 % is a linear combination of the mean-centered original variables, using

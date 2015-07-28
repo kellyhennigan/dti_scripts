@@ -1,5 +1,6 @@
 function msh = plot_pointsOnMesh(msh, coords, cl_idx,colors, alpha)
-% Color mesh vertices based on fiber endpoints
+% Color mesh vertices based on fiber endpoint clusters
+
 %
 % msh = AFQ_meshAddFgEndpoints(msh, fg, colors, crange, alpha, weights, dilate)
 %

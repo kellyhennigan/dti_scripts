@@ -1,7 +1,7 @@
 %% define variables for calling createOverlayImages
 
 
-%% define directories and file names, load files
+%% 
 
 clear all
 close all
@@ -10,46 +10,59 @@ close all
 p = getDTIPaths; cd(p.data);
 
 
-subjects={'group_sn'};  % group is subject
+subjects=getDTISubjects;  % define subjects to process
+subjects = {'sa07'};
+
+bgFilePath = '%s/t1/t1_fs.nii.gz'; % file path to background image
+% bgFilePath = '%s/t1/t1_halfmm.nii.gz'; % file path to background image
 
 
-bgFilePath = '%s/t1/t1_sn.nii.gz';  % averaged t1 anat
+method = 'conTrack'; % what tracking method? conTrack or mrtrix
+fStr = '_da_endpts'; % suffix on input fiber density files?
 
 
-maskFilePath =  '%s/ROIs/DA_sn_binary_mask.nii.gz';  % comment out or set to '' to not use
+% target strings
+targets = {'caudateL','caudateR';
+    'naccL','naccR';
+    'putamenL','putamenR'};
 
 
-% olFiles relative to subj dir; %s will be targets
-olFilePath = '%s/fg_densities/conTrack/%s_da_endpts_S3_sn.nii.gz';
+t_idx = [1 2 3]; % ONLY PLOT THESE FROM TARGET LIST
 
 
-% define fg densities to overlay on each image
-targets = {'caudate';
-    'nacc';
-    'putamen'};
+plot_biggest = 0; % 1 to do hard segmentation based on strongest connectivity, otherwise 0
 
-t_idx = [1:3]; % ONLY PLOT THESE FROM TARGET LIST
 
-plot_biggest = 1; % uncomment out or set to '' to not do this
-cols = getDTIColors(1:3);
+plane=3; % 1 for sagittal, 2 for coronal, 3 for axial
 
-plane=2; % 1 for sagittal, 2 for coronal, 3 for axial
 
-acpcSlices = [-17]; % acpc-coordinate of slice to plot
+acpcSlices = [-10]; % acpc-coordinate of slice to plot
 
-c_range = []; % range of colormap
 
-thresh = 0; % for thresholding t-maps
+%  c_range = [.1 .9]; % color_range
+c_range = [];
+
+scale = 0;   % log-transform and scale fiber counts to be btwn [1 0]
+
+
+
 
 saveFigs = 0; % [1/0 to save out slice image, 1/0 to save out cropped image]
-figDir = [p.figures '/fg_densities'];
+figDir = [p.figures '/fg_densities/' method];
 figPrefix = 'CNP';
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% do it
 
-%% overlay fiber densities onto subject's T1 in native space
+% createOverlayImages: 
+
+
+% assume overlay directory is fiber density directory if it isn't defined
+if notDefined('olDir')
+    olDir = ['fg_densities/' method];  % filepath for overlay file (relative to subj)
+end
 
 
 % unless otherwise specified, use FDColors for colormaps
@@ -57,6 +70,28 @@ if notDefined('cols')
     cols = getDTIColors('fd');
 end
 
+
+% if autocrop isn't defined, don't do it
+if notDefined('ac')
+    ac = inf;
+end
+
+% if plane isn't defined, do axial plane by default
+if notDefined('plane')
+    plane = 3;
+end
+
+
+
+% do hard segmentation based on strongest connectivity? Default is to not
+% do this
+if notDefined('plot_biggest')
+    plot_biggest=0;
+end
+if plot_biggest==1
+    cols = getDTIColors(1:3);
+    figPrefix = 'win';
+end
 
 
 %%
@@ -70,10 +105,13 @@ end
 nOls = size(targets,1); % useful variable to have
 
 
+ 
+
 %% do it
 
 
 s=1;
+for s=1:numel(subjects)
     
     subj = subjects{s};
     
@@ -83,8 +121,7 @@ s=1;
     
     
     % load fiber density files
-    
-    fd = cellfun(@(x) readFileNifti(sprintf(olFilePath,subj,x)), targets);
+    fd = cellfun(@(x) readFileNifti(fullfile(subj, olDir,[x fStr '.nii.gz'])), targets);
     fdImgs ={fd(:).data}; fdImgs=reshape(fdImgs,size(targets));
     fd = fd(1);  fdXform = fd.qto_xyz;
     
@@ -97,16 +134,24 @@ s=1;
     
     % if scaling is desired, do it
     if ~notDefined('scale') && scale==1
-        fdImgs = cellfun(@scaleFiberCounts, fdImgs, 'UniformOutput',0);
+%         fdImgs = cellfun(@scaleFiberCounts, fdImgs, 'UniformOutput',0);
+        fdImgs = cellfun(@scaleFiberCounts2, fdImgs, 'UniformOutput',0);
     end
   
     
     % if masking overlays is desired, do it
     if ~notDefined('maskFilePath')  && ~isempty(maskFilePath)
         mask = readFileNifti(sprintf(maskFilePath,subj));
-        fdImgs = cellfun(@(x) double(x) .* repmat(double(mask.data),1,1,1,size(x,4)), fdImgs, 'UniformOutput',0);
+        fdImgs = cellfun(@(x) double(x) .* double(mask.data), fdImgs, 'UniformOutput',0);
     end
    
+    
+      % if acpcSlices isn't defined, plot center of mass coords
+    if notDefined('acpcSlices') || isempty('acpcSlices')
+        coords = round(cell2mat(reshape(cellfun(@(x) getNiiVolStat(x,fd.qto_xyz,'com'), fdImgs, 'UniformOutput',0), [], 1)));
+        acpcSlices = unique(coords(:,plane))';
+    end
+       
    
     % merge overlays in the same rows (e.g., L and R)
     if size(targets,2)>1
@@ -127,7 +172,7 @@ s=1;
         fd.data=win_idx;
         
         % plot overlay of voxels w/biggest connectivity
-        [slImgs,~,~,~,acpcSlicesOut] = plotOverlayImage(fd,bg,cols,[1 numel(fdImgs)],plane,acpcSlices,0);
+        [slImgs,~,~,~,acpcSlicesOut] = plotOverlayImage(fd,bg,cols,[1 numel(fdImgs)],plane,acpcSlices,0,ac);
         
         
     else
@@ -142,7 +187,7 @@ s=1;
             
             
             % plot fiber density overlay
-            [imgRgbs, olMasks,olVals(j,:),~,acpcSlicesOut] = plotOverlayImage(fd,bg,cols{j},c_range,plane,acpcSlices,0);
+            [imgRgbs, olMasks,olVals(j,:),~,acpcSlicesOut] = plotOverlayImage(fd,bg,cols{j},c_range,plane,acpcSlices,0,ac);
             
             
             % cell array of just rgb values for overlays
@@ -201,15 +246,7 @@ s=1;
 %     close all
     
     
-
-
-
-
-
-
-
-
- 
+end % subjects
 
 
 

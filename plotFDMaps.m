@@ -107,7 +107,8 @@ if saveFig(1)==1
     fprintf(['\n\n saving out fig ' figName '...']);
     
     %     print(gcf, '-depsc', '-tiff', '-loose', '-r300', '-painters', fullfile(figDir,[figName '.eps']));
-    saveas(h,fullfile(figDir,figName),'pdf');
+    %      saveas(h,fullfile(figDir,figName),'pdf');
+    print(gcf,'-dpng','-r600',fullfile(figDir,figName))
     
     fprintf('done.\n');
     
@@ -116,52 +117,52 @@ end
 
 %% cropped fig
 
- 
-    midpt=ceil(size(slImg)./2);
-    cr = [midpt(1)-29, midpt(1)+30]; % crop rows (take mid horizontal strip, 60px tall)
-    cc = [midpt(2)-29, midpt(2)+30]; % crop columns (mid vertical strip, 60px wide)
+
+midpt=ceil(size(slImg)./2);
+cr = [midpt(1)-29, midpt(1)+30]; % crop rows (take mid horizontal strip, 60px tall)
+cc = [midpt(2)-29, midpt(2)+30]; % crop columns (mid vertical strip, 60px wide)
+
+switch plane
     
-    switch plane
+    case 1 % sagittal
         
-        case 1 % sagittal
-            
-            cc  =cc+10; % (looks better)
-            croppedImg =slImg(cr(1):cr(2),cc(1):cc(2),:);
-            
-        case 2  % coronal
-            cr = cr+15;
-            croppedImg =slImg(cr(1):cr(2),cc(1):cc(2),:);
-            
-        case 3
-            
-            croppedImg =slImg(cr(1):cr(2),cc(1):cc(2),:);
-            
-    end
+        cc  =cc+10; % (looks better)
+        croppedImg =slImg(cr(1):cr(2),cc(1):cc(2),:);
+        
+    case 2  % coronal
+        cr = cr+15;
+        croppedImg =slImg(cr(1):cr(2),cc(1):cc(2),:);
+        
+    case 3
+        
+        croppedImg =slImg(cr(1):cr(2),cc(1):cc(2),:);
+        
+end
+
+
+% plot it
+h(2) = figure;
+
+pos = get(gcf,'Position');
+set(gcf,'Position',[scSize(3)-pos(3), scSize(4)-pos(4), pos(3), pos(4)]) % put the figure in the upper right corner of the screen
+image(croppedImg)
+axis equal; axis off;
+set(gca,'Position',[0,0,1,1]);
+
+
+if saveFig(2)==1  % then plot and save
+    
+    croppedFigName = [figName '_cropped'];
+    fprintf(['\n\n saving out cropped fig ' figName '...']);
     
     
-    % plot it
-    h(2) = figure;
+    print(h(2),'-dpng','-r600',fullfile(figDir,croppedFigName));
+    %         saveas(h(2),fullfile(figDir,croppedFigName),'pdf');
     
-    pos = get(gcf,'Position');
-    set(gcf,'Position',[scSize(3)-pos(3), scSize(4)-pos(4), pos(3), pos(4)]) % put the figure in the upper right corner of the screen
-    image(croppedImg)
-    axis equal; axis off;
-    set(gca,'Position',[0,0,1,1]);
+    fprintf('done.\n');
     
     
-    if saveFig(2)==1  % then plot and save
-        
-        croppedFigName = [figName '_cropped'];
-        fprintf(['\n\n saving out cropped fig ' figName '...']);
-        
-        
-        %     print(gcf, '-depsc', '-tiff', '-loose', '-r300', '-painters', fullfile(figDir,[figName '.eps']));
-        saveas(h(2),fullfile(figDir,croppedFigName),'pdf');
-        
-        fprintf('done.\n');
-        
-        
-    end
+end
 
 
 

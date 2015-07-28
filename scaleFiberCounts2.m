@@ -1,4 +1,4 @@
-function [fdImgsc,max_coord] = scaleFiberCounts(fdImg)
+function [fdImgsc,max_coord] = scaleFiberCounts2(fdImg)
 % -------------------------------------------------------------------------
 % usage: use this function to threshold and transform fiber count imgs.
 % 
@@ -21,7 +21,7 @@ function [fdImgsc,max_coord] = scaleFiberCounts(fdImg)
 
 % voxels with vals less than this % of the total # of fibers will be set to
 % zero
-thresh_percent_of_total = .1; 
+thresh_percent_of_total = 0.2; 
 
 
 if notDefined('fdImg') || numel(size(fdImg))~=3
@@ -37,9 +37,10 @@ vox_thresh = sum(fdImg(:)).*(thresh_percent_of_total./100);
 fdImg(fdImg<vox_thresh) = 0;
   
         
-% log-transform data and scale by the max value, so vals are now btwn 0-1
-fdImgsc = log(fdImg+1)./max(log(fdImg(:)+1));
-
+% scale by sum of all values, then x 100 to make it percentage
+fdImgsc = fdImg./sum(fdImg(:));
+fdImgsc = fdImgsc.*100;
+% 
 
 % also return the img coords of the voxel w/the highest fiber count
 [~,idx]=max(fdImgsc(:));

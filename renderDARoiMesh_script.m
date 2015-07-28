@@ -14,7 +14,7 @@ cd(dataDir)
 subject = 'group_sn'
 
 % t1Str = 't1_sn_group_mean';
-t1Str = 't1_fs';
+t1Str = 't1_sn';
 
 segFile = 't1_class.nii.gz';
 
@@ -28,7 +28,8 @@ method = 'conTrack';
 fgStr = '_autoclean';
 fdStr = '_da_endpts_S3_sn';
 
-cmap = getFDColors2;
+% cmap = getFDColors2;
+cmap=getDTIColors('fd');
 crange = [-4 4];
 
 
@@ -47,8 +48,8 @@ load([subject '/ROIs/' daStr '.mat']);
 fg = cellfun(@(x) mtrImportFibers([subject '/fibers/' method '/' x fgStr '.pdb']), targets);
 
 FDs = cellfun(@(x) readFileNifti([subject '/fg_densities/' method '/' x fdStr '.nii.gz']), targets);
-fdImgs = {fd(:).data};
-% fdImgs = cellfun(@(x) scaleFiberCounts(x), fdImgs, 'UniformOutput',0);
+fdImgs = {FDs(:).data};
+fdImgs = cellfun(@(x) scaleFiberCounts(x), fdImgs, 'UniformOutput',0);
 % fd12 = readFileNifti('sa26/fg_densities/fd_NP_S3.nii.gz');
 fdImgs{1} = fdImgs{1}.*-1;
 fd = FDs(1); fd.data = fdImgs{1} + fdImgs{2};
@@ -80,7 +81,7 @@ axis off
 
 scatter3(70,20,200,50,[1 0 0],'filled')
 
-[sf, fg] = dtiComputeSuperFiberRepresentation(fg, [], 200);
+[sf, fg] = dtiComputeSuperFiberRepresentation(fg(1), [], 200);
 sf=getFGEnds(sf,4);
 
 lightH = AFQ_RenderFibers(sf,'color',[1 0 0],'newfig',1)

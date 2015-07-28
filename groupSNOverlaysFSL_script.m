@@ -18,7 +18,7 @@ method = 'fsl';
 LR = ['L','R'];
 
 % probtrackx results directory, relative to subjDir
-ptDir = 'fsl_dti/probtrackx/std/striatum'; % L or R will be added to end
+ptDir = 'fsl_dti/probtrackx/old/striatum'; % L or R will be added to end
 
 roiStrs = {'caudate','nacc','putamen'};
 

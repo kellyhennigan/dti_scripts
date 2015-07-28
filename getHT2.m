@@ -16,7 +16,7 @@ function [T2,stats]=getHT2(X)
 % 
 % OUTPUT:
 %   T2 - hotelling t-squared 
-%   p - p value of t2
+%   stats - F,p value of t2, and df
 % 
 % NOTES:
 % 

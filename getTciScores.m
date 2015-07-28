@@ -22,7 +22,7 @@ tciScoreFilePath = '/Users/Kelly/dti/data/tci_scores/tci_scores.mat';
 
 load(tciScoreFilePath);
 
-tci_scores(18,:)=nanmean(tci_scores); % sa28
+% tci_scores(18,:)=nanmean(tci_scores); % sa28
 
 indx =ismember(tci_subjects,subjects);
 

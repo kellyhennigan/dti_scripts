@@ -48,30 +48,40 @@ colors = [caud; nacc; putamen; dTier; vTier; daRoi]; % needs to match the number
 
 % fiber density colors:
 % yellow
-yellow = [
-    252, 244, 200
-    250, 223, 150
-    244, 199, 92
-    caud.*255
-    221, 151, 28]./255;
+% yellow = [
+%     252, 244, 200
+%     250, 223, 150
+%     244, 199, 92
+%     caud.*255
+%     221, 151, 28]./255;
 
-
-% red
-red = [
-    254   224   210
-    252   140   114
-    251    91    74
-    nacc.*255
-    200    15    21]./255;
+% % red
+% red = [
+%     254   224   210
+%     252   140   114
+%     251    91    74
+%     nacc.*255
+%     200    15    21]./255;
 
 
 % blue
-blue = [
-    158, 202, 225
-    107, 174, 214
-    66, 146, 198
-    putamen.*255
-    8, 69, 148]./255;
+% blue = [
+%     158, 202, 225
+%     107, 174, 214
+%     66, 146, 198
+%     putamen.*255
+%     8, 69, 148]./255;
+% 
+
+
+
+yellow = [linspace(252,221,64)',linspace(244,151,64)',linspace(200,28,64)']./255;
+
+red = [linspace(255,200,64)',linspace(224,15,64)',linspace(210,21,64)']./255;
+
+blue = [linspace(158,0,64)',linspace(202,0,64)',linspace(225,181,64)']./255;
+
+
 
 
 fdcolors=[{yellow}; {red}; {blue}];
